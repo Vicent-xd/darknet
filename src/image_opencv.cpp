@@ -903,6 +903,8 @@ extern "C" void draw_detections_cv_v3(mat_cv* mat, detection *dets, int num, flo
                         strcat(labelstr, names[j]);
                         printf(", %s: %.0f%% ", names[j], dets[i].prob[j] * 100);
                     }
+                    //if (strcmp(names[j],"person")==0)//same
+                    //
                 }
             }
             if (class_id >= 0) {

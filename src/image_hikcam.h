@@ -23,6 +23,7 @@ extern "C" {
 
 int hikcam_init(char* ip, char* usr, char* password,int port);
 image get_image_from_hikcam_resize(int w, int h, int c, mat_cv** in_img);
+int enalbe_hikcam_control(detection *dets,int num,float thresh,char **names, int classes);
 
 #ifdef __cplusplus
 }

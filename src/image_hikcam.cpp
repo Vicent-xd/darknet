@@ -17,6 +17,7 @@
 using namespace std;
 using namespace cv;
 cv::Mat dst_hik;
+LONG lUserID;
 //cv::Mat src;
 //cv::Mat* ptr
 pthread_mutex_t dst_lock;//=PTHREAD_MUTEX_INITIALIZER;
@@ -161,7 +162,7 @@ extern "C" int hikcam_init(char* ip, char* usr, char* password,int port)
     pthread_mutex_init(&dst_lock, NULL);
     NET_DVR_Init();
     NET_DVR_SetExceptionCallBack_V30(0, NULL, g_ExceptionCallBack, NULL);
-    long lUserID;
+    //long lUserID;
     //char cUserChoose = 'r';
     //login
     NET_DVR_USER_LOGIN_INFO struLoginInfo = {0};
@@ -269,4 +270,60 @@ extern "C" image get_image_from_hikcam_resize(int w, int h, int c, mat_cv** in_i
     // show_image_mat(*in_img, "in_img");
     return im; 
 }
+extern "C" int enalbe_hikcam_control(detection *dets,int num,float thresh,char **names, int classes)
+{  
+    int Ret=-1;
+    try {
+      int i, j;
+      for (i = 0; i < num; ++i) {
+            char labelstr[4096] = { 0 };
+            int class_id = -1;
+            for (j = 0; j < classes; ++j) {
+                int show = strncmp(names[j], "dont_show", 9);
+                if (dets[i].prob[j] > thresh && show) {
+                    if (class_id < 0) {
+                        strcat(labelstr, names[j]);
+                        class_id = j;
+                        char buff[10];
+                        //sprintf(buff, " (%2.0f%%)", dets[i].prob[j] * 100);
+                        strcat(labelstr, buff);
+                        //printf("%s: %.0f%% ", names[j], dets[i].prob[j] * 100);
+                    }
+                    else {
+                        strcat(labelstr, ", ");
+                        strcat(labelstr, names[j]);
+                        //printf(", %s: %.0f%% ", names[j], dets[i].prob[j] * 100);
+                    }
 
+                }
+            }
+            if (class_id >= 0) {
+
+                box b = dets[i].bbox;
+                if (std::isnan(b.w) || std::isinf(b.w)) b.w = 0.5;
+                if (std::isnan(b.h) || std::isinf(b.h)) b.h = 0.5;
+                if (std::isnan(b.x) || std::isinf(b.x)) b.x = 0.5;
+                if (std::isnan(b.y) || std::isinf(b.y)) b.y = 0.5;
+                b.w = (b.w < 1) ? b.w : 1;
+                b.h = (b.h < 1) ? b.h : 1;
+                b.x = (b.x < 1) ? b.x : 1;
+                b.y = (b.y < 1) ? b.y : 1;
+                //NET_DVR_PTZControl_Other(lUserID, lChannel, dwPTZCommand, dwStop);
+                //BOOL Ret=0;
+	       	Ret=NET_DVR_PTZControl_Other(lUserID,1,PAN_LEFT,0);
+            }
+            else
+            {
+	      //BOOL Ret=0;
+              Ret=NET_DVR_PTZControl_Other(lUserID,1,TILT_UP,1);
+              //stop control
+            }
+	    //return Ret;
+            
+      }
+    }
+    catch (...) {
+        std::cerr << "Hikcam_control exception: enalbe_hikcam_control() \n";
+    }
+    return Ret;
+}

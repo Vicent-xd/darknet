@@ -57,6 +57,7 @@ static const int thread_wait_ms = 1;
 static volatile int run_fetch_in_thread = 0;
 static volatile int run_detect_in_thread = 0;
 static int hikcam=1;//enable hikcam
+static int hikcontrol=1;//enable hikcam control
 
 void *fetch_in_thread(void *ptr)
 {
@@ -303,7 +304,13 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
                     if (time_limit_sec > 0) send_http_post_once = 1;
                 }
             }
-
+            if (hikcam==1 && hikcontrol==1)
+            {
+                    //if (strcmp(names[j],"person")==0)//same
+                    //local_dets, local_nboxes,demo_names
+                    enalbe_hikcam_control(local_dets,local_nboxes,demo_thresh,demo_names, demo_classes);
+            }
+            
             if (!benchmark && !dontdraw_bbox) draw_detections_cv_v3(show_img, local_dets, local_nboxes, demo_thresh, demo_names, demo_alphabet, demo_classes, demo_ext_output);
             free_detections(local_dets, local_nboxes);
 
