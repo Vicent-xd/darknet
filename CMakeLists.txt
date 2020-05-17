@@ -18,6 +18,7 @@ option(ENABLE_CUDNN "Enable CUDNN" ON)
 option(ENABLE_CUDNN_HALF "Enable CUDNN Half precision" ON)
 option(ENABLE_ZED_CAMERA "Enable ZED Camera support" ON)
 option(ENABLE_VCPKG_INTEGRATION "Enable VCPKG integration" ON)
+option(ENABLE_HIKCAM "Enable hikcam integration" ON)
 
 if(ENABLE_VCPKG_INTEGRATION AND DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
@@ -217,7 +218,11 @@ if(ENABLE_CUDA)
   set(CMAKE_CUDA_FLAGS "${CUDA_ARCH_FLAGS_SPACE_SEPARATED} ${CUDA_HOST_COMPILER_FLAGS} ${CMAKE_CUDA_FLAGS}")
   message(STATUS "CMAKE_CUDA_FLAGS: ${CMAKE_CUDA_FLAGS}")
 endif()
-
+if(ENABLE_HIKCAM)
+  link_directories(${CMAKE_CURRENT_LIST_DIR}/lib)
+  link_directories(${CMAKE_CURRENT_LIST_DIR}/lib/HCNetSDKCom)
+  target_link_libraries(image_hikcam PRIVTER hcnetsdk PlayCtrl)
+endif()
 if(ENABLE_CUDA)
   if(ENABLE_ZED_CAMERA)
     find_package(ZED 2 QUIET)
@@ -270,6 +275,7 @@ file(GLOB sources "${CMAKE_CURRENT_LIST_DIR}/src/*.c")
 list(APPEND sources
   ${CMAKE_CURRENT_LIST_DIR}/src/http_stream.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/image_opencv.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/src/image_hikcam.cpp
 )
 #remove darknet.c file which is necessary only for the executable, not for the lib
 list(REMOVE_ITEM sources

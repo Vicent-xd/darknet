@@ -1,6 +1,6 @@
 #ifndef IMAGE_OPENCV_H
 #define IMAGE_OPENCV_H
-
+#pragma once
 #include "image.h"
 #include "matrix.h"
 

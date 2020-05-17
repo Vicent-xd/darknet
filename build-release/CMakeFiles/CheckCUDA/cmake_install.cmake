@@ -1,4 +1,4 @@
-# Install script for directory: /home/vicent/gittmp/darknet/build-release/CMakeFiles/CheckCUDA
+# Install script for directory: /home/vicent/Desktop/darknet/build-release/CMakeFiles/CheckCUDA
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/vicent/gittmp/darknet/build-release/CMakeFiles/CheckCUDA/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/vicent/Desktop/darknet/build-release/CMakeFiles/CheckCUDA/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

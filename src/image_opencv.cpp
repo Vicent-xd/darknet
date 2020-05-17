@@ -76,7 +76,18 @@ using std::endl;
 #ifndef CV_AA
 #define CV_AA cv::LINE_AA
 #endif
-
+//----------hikcam------------
+/*
+#include "HCNetSDK.h"
+#include "PlayM4.h"
+#include "LinuxPlayM4.h"
+#include <unistd.h>
+#include <stdio.h>
+static cv::Mat dst_hik;
+LONG nPort=-1;
+HWND h = NULL;
+*/
+//----------end---------------
 extern "C" {
 
     //struct mat_cv : cv::Mat {  };
@@ -1500,6 +1511,11 @@ void show_opencv_info()
     std::cerr << " OpenCV version: " << CV_VERSION_MAJOR << "." << CV_VERSION_MINOR << "." << CVAUX_STR(CV_VERSION_REVISION) OCV_D
         << std::endl;
 }
+// ====================================================================
+// HIKCAM
+// ====================================================================
+
+
 
 
 

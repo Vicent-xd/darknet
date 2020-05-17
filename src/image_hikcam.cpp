@@ -1,0 +1,272 @@
+#include "image_hikcam.h"
+//#ifndef IMAGE_OPENCV_H
+#include "image_opencv.h"
+//#endif
+#include <iostream>
+
+#include <stdio.h>
+#include <string.h>
+
+#include "HCNetSDK.h"
+#include "PlayM4.h"
+#include "LinuxPlayM4.h"
+
+#include <unistd.h>
+#include "opencv2/opencv.hpp"
+
+using namespace std;
+using namespace cv;
+cv::Mat dst_hik;
+//cv::Mat src;
+//cv::Mat* ptr
+pthread_mutex_t dst_lock;//=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_init(&dst_lock,NULL);
+//extern mat_cv* dst_hik_ptr=(mat_cv*)&dst_hik;
+//extern "C" mat_cv* dst_hik_ptr;
+LONG nPort=-1;
+HWND h = NULL;
+std::list<cv::Mat> g_frameList;
+//int frameok=-1;
+//extern "C" cv::Mat image_to_mat(image img);
+extern "C" image mat_to_image(cv::Mat mat);
+
+void CALLBACK DecCBFun(LONG nPort, char *pBuf, LONG nSize, FRAME_INFO *pFrameInfo, void* nReserved1, LONG nReserved2)
+{
+   long lFrameType = pFrameInfo->nType;
+     //std::cerr << lFrameType << std::endl; 
+     if (lFrameType == T_YV12)
+     {
+      //cv::Mat dst(pFrameInfo->nHeight, pFrameInfo->nWidth,
+      //            CV_8UC3);  // 8UC3表示8bit uchar无符号类型,3通道值
+           //frameok=0;
+           //static cv::Mat dst_hik;
+           //cv::Mat *ptr=&dst_hik;
+           
+           dst_hik.create(pFrameInfo->nHeight, pFrameInfo->nWidth,
+                 CV_8UC3);
+ 
+           cv::Mat src(pFrameInfo->nHeight + pFrameInfo->nHeight / 2, pFrameInfo->nWidth, CV_8UC1, (uchar *)pBuf);
+           //cv::cvtColor(src, dst_hik, cv::COLOR_YUV2BGR_YV12);//CV_YUV2BGR_YV12);
+           
+           cv::cvtColor(src, dst_hik, cv::COLOR_YUV2BGR_YV12);
+           //dst_hik_ptr=(mat_cv*)ptr;
+           pthread_mutex_lock(&dst_lock);
+           //frameok=1;
+           g_frameList.clear();
+           g_frameList.push_back(dst_hik);
+	         //cv::imshow("bgr", dst_hik);
+           //cv::waitKey(10);
+           pthread_mutex_unlock(&dst_lock);
+     }
+    usleep(1000);
+     
+   //cv::Mat src(pFrameInfo->nHeight + pFrameInfo->nHeight / 2, pFrameInfo->nWidth, CV_8UC1, (uchar *)pBuf);
+   //cv::cvtColor(src, dst, CV_YUV2BGR_YV12);
+   //cv::imshow("bgr", dst);
+   //pthread_mutex_lock(&mutex);
+   //g_frameList.push_back(dst);
+   //pthread_mutex_unlock(&mutex);
+   //vw << dst;
+   //cv::waitKey(10);
+ 
+}
+void CALLBACK g_RealDataCallBack_V30(LONG lRealHandle, DWORD dwDataType, BYTE *pBuffer, DWORD dwBufSize,DWORD dwUser)
+{
+   /*
+   if (dwDataType == 1)
+   {
+       PlayM4_GetPort(&nPort);
+       PlayM4_SetStreamOpenMode(nPort, STREAME_REALTIME);
+       PlayM4_OpenStream(nPort, pBuffer, dwBufSize, 1024 * 1024);
+       PlayM4_SetDecCallBackEx(nPort, DecCBFun, NULL, NULL);
+       PlayM4_Play(nPort, h);
+   }
+   else
+   {
+       BOOL inData = PlayM4_InputData(nPort, pBuffer, dwBufSize);
+   }*/
+   //std::cerr << dwDataType << std::endl;
+   DWORD dRet;
+   switch (dwDataType)
+   {
+     case NET_DVR_SYSHEAD:           //系统头
+       if (!PlayM4_GetPort(&nPort))  //获取播放库未使用的通道号
+       {
+         break;
+       }
+       if (dwBufSize > 0) {
+         if (!PlayM4_SetStreamOpenMode(nPort, STREAME_REALTIME)) {
+           dRet = PlayM4_GetLastError(nPort);
+           break;
+         }
+         if (!PlayM4_OpenStream(nPort, pBuffer, dwBufSize, 1024 * 1024)) {
+           dRet = PlayM4_GetLastError(nPort);
+           break;
+         }
+         //设置解码回调函数 只解码不显示
+         if (!PlayM4_SetDecCallBack(nPort, DecCBFun)) {
+            dRet = PlayM4_GetLastError(nPort);
+            break;
+         }
+ 
+         //设置解码回调函数 解码且显示
+         /*if (!PlayM4_SetDecCallBackEx(nPort, DecCBFun, NULL, NULL))
+         {
+           dRet = PlayM4_GetLastError(nPort);
+           break;
+         }*/
+ 
+         //打开视频解码
+         if (!PlayM4_Play(nPort, h))
+         {
+           dRet = PlayM4_GetLastError(nPort);
+           break;
+         }
+ 
+         //打开音频解码, 需要码流是复合流
+         /*if (!PlayM4_PlaySound(nPort)) {
+           dRet = PlayM4_GetLastError(nPort);
+           break;
+         }*/
+       }
+       break;
+       //usleep(500);
+     case NET_DVR_STREAMDATA:  //码流数据
+       if (dwBufSize > 0 && nPort != -1) {
+         BOOL inData = PlayM4_InputData(nPort, pBuffer, dwBufSize);
+         while (!inData) {
+           sleep(100);
+           inData = PlayM4_InputData(nPort, pBuffer, dwBufSize);
+           std::cerr << "PlayM4_InputData failed \n" << std::endl;
+         }
+       }
+       break;
+   }
+}
+void CALLBACK g_ExceptionCallBack(DWORD dwType, LONG lUserID, LONG lHandle, void *pUser)
+{
+    char tempbuf[256] = {0};
+    switch(dwType) 
+    {
+    case EXCEPTION_RECONNECT:			
+        printf("pyd----------reconnect--------%d\n", time(NULL));
+        break;
+    default:
+        break;
+    }
+}
+extern "C" int hikcam_init(char* ip, char* usr, char* password,int port)
+{
+    //pthread_t hThread;
+    pthread_mutex_init(&dst_lock, NULL);
+    NET_DVR_Init();
+    NET_DVR_SetExceptionCallBack_V30(0, NULL, g_ExceptionCallBack, NULL);
+    long lUserID;
+    //char cUserChoose = 'r';
+    //login
+    NET_DVR_USER_LOGIN_INFO struLoginInfo = {0};
+    NET_DVR_DEVICEINFO_V40 struDeviceInfoV40 = {0};
+    struLoginInfo.bUseAsynLogin = false;
+
+
+    struLoginInfo.wPort = 8000;
+    memcpy(struLoginInfo.sDeviceAddress, "172.17.1.99", NET_DVR_DEV_ADDRESS_MAX_LEN);
+    memcpy(struLoginInfo.sUserName, "admin", NAME_LEN);
+    memcpy(struLoginInfo.sPassword, "Ab12345678", NAME_LEN);
+    lUserID = NET_DVR_Login_V40(&struLoginInfo, &struDeviceInfoV40);
+
+    if (lUserID < 0)
+    {
+        std::cerr << "pyd1---Login error," << NET_DVR_GetLastError() << std::endl ;
+        //printf("pyd1---Login error, %d\n", NET_DVR_GetLastError());
+        return HPR_ERROR;
+    }
+    printf("Login SUCCESS\n");
+    long lRealPlayHandle;
+    NET_DVR_PREVIEWINFO struPlayInfo = {0};
+    struPlayInfo.lChannel     = 1;  //channel NO
+    struPlayInfo.dwLinkMode   = 0;
+    struPlayInfo.bBlocked = 1;
+    struPlayInfo.dwDisplayBufNum = 1;
+    lRealPlayHandle = NET_DVR_RealPlay_V40(lUserID, &struPlayInfo, NULL, NULL);
+    
+    if (lRealPlayHandle < 0)
+    {
+        std::cerr << "pyd1---NET_DVR_RealPlay_V40 error\n";
+        //printf("pyd1---NET_DVR_RealPlay_V40 error\n");
+        NET_DVR_Logout(lUserID);
+        NET_DVR_Cleanup();
+        return HPR_ERROR;
+    }
+    printf("Init RealPlay SUCCESS\n");
+    int iRet=0;
+    iRet = NET_DVR_SetRealDataCallBack(lRealPlayHandle, g_RealDataCallBack_V30,0);
+    if (!iRet)
+    {
+        std::cerr << "pyd1---NET_DVR_RealPlay_V40 error\n";
+        //printf("pyd1---NET_DVR_RealPlay_V40 error\n");
+        NET_DVR_StopRealPlay(lRealPlayHandle);
+        NET_DVR_Logout_V30(lUserID);
+        NET_DVR_Cleanup();  
+        //return iRet;
+        return HPR_ERROR;
+    }
+    printf("Init RealPlay SUCCESS\n");
+    //cv::Mat *img_ptr=&dst_hik;
+   // img_ptr=&dst_hik;
+    // cv::Mat *src = &dst_hik;
+    // *(cv::Mat **)in_img = src;
+
+    //Demo_RealPlay(lUserID);
+    //return (mat_cv*)img_ptr;
+    return HPR_OK;    
+}
+
+extern "C" image get_image_from_hikcam_resize(int w, int h, int c, mat_cv** in_img)
+{
+    c = c ? c : 3;
+    //cv::Mat *src = NULL;//lock it while returning 
+    cv::Mat *src=NULL;
+    src = new cv::Mat();
+    static int once = 1;
+   /* if (once) {
+        once = 0;
+        do {
+            //if (src) delete src;
+            //src = (cv::Mat*)get_capture_frame_cv(cap);
+            //src=(cv::Mat*)dst_hik_ptr;
+                pthread_mutex_lock(&dst_lock);
+                src=g_frameList.front();
+                pthread_mutex_unlock(&dst_lock);
+            if (!src.empty()) return make_empty_image(0, 0, 0);
+            //printf("get_image_from_hikcam!");
+        } while (src->cols < 1 || src->rows < 1 || src->channels() < 1);
+        printf("Video stream: %d x %d \n", src->cols, src->rows);
+    }*/
+    //src=(cv::Mat*)dst_hik_ptr;
+    pthread_mutex_lock(&dst_lock);
+    src=(cv::Mat *)&g_frameList.front();
+    *in_img = (mat_cv *)new cv::Mat(src->rows, src->cols, CV_8UC(c));
+    cv::resize(*src, **(cv::Mat**)in_img, (*(cv::Mat**)in_img)->size(), 0, 0, cv::INTER_LINEAR);
+   // std:cout<<src->rows<<src->cols<<std::endl;
+    //show_image_mat(*in_img, "in_img");
+    pthread_mutex_unlock(&dst_lock);
+    if (!src) 
+      {
+        printf("src is null!");
+        return make_empty_image(0, 0, 0);
+      }
+    //*in_img = (mat_cv *)new cv::Mat(src->rows, src->cols, CV_8UC(c));
+    //*(cv::Mat **)in_img = ptr;
+    std::cout<<"c:"<<c<<endl;
+    cv::Mat new_img = cv::Mat(h, w, CV_8UC(c));
+    cv::resize(*src, new_img, new_img.size(), 0, 0, cv::INTER_LINEAR);
+    //if (c>1) cv::cvtColor(new_img, new_img, cv::COLOR_RGB2BGR);
+    image im = mat_to_image(new_img);
+    //cv::imshow("bgr", src);
+    //cv::waitKey(10);
+    //release_mat((mat_cv **)&src);
+    // show_image_mat(*in_img, "in_img");
+    return im; 
+}
+

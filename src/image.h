@@ -9,7 +9,7 @@
 #include <math.h>
 
 #include "image_opencv.h"
-
+#include "image_hikcam.h"//hikcam
 #include "box.h"
 #ifdef __cplusplus
 extern "C" {

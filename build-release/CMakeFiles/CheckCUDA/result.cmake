@@ -1,2 +1,2 @@
-set(CMAKE_CUDA_COMPILER "/bin/nvcc")
+set(CMAKE_CUDA_COMPILER "/usr/bin/nvcc")
 

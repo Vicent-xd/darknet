@@ -1,4 +1,4 @@
-set(CMAKE_CUDA_COMPILER "/bin/nvcc")
+set(CMAKE_CUDA_COMPILER "/usr/bin/nvcc")
 set(CMAKE_CUDA_HOST_COMPILER "")
 set(CMAKE_CUDA_HOST_LINK_LAUNCHER "/usr/lib/nvidia-cuda-toolkit/bin/g++")
 set(CMAKE_CUDA_COMPILER_ID "NVIDIA")
@@ -28,5 +28,5 @@ set(CMAKE_CUDA_IMPLICIT_LINK_LIBRARIES "cudadevrt;cudart_static;rt;pthread;dl;st
 set(CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES "/usr/lib/x86_64-linux-gnu/stubs;/usr/lib/x86_64-linux-gnu;/usr/lib/gcc/x86_64-linux-gnu/8;/usr/lib;/lib/x86_64-linux-gnu;/lib")
 set(CMAKE_CUDA_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")
 
-set(CMAKE_LINKER "/bin/ld")
+set(CMAKE_LINKER "/usr/bin/ld")
 set(CMAKE_MT "")

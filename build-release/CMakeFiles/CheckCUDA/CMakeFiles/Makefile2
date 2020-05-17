@@ -44,10 +44,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/vicent/gittmp/darknet/build-release/CMakeFiles/CheckCUDA
+CMAKE_SOURCE_DIR = /home/vicent/Desktop/darknet/build-release/CMakeFiles/CheckCUDA
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/vicent/gittmp/darknet/build-release/CMakeFiles/CheckCUDA
+CMAKE_BINARY_DIR = /home/vicent/Desktop/darknet/build-release/CMakeFiles/CheckCUDA
 
 #=============================================================================
 # Directory level rules for the build root directory
