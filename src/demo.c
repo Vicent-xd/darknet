@@ -70,7 +70,13 @@ void *fetch_in_thread(void *ptr)
         if (hikcam==1)
         {
             in_s = get_image_from_hikcam_resize(net.w, net.h, net.c, &in_img);
-        }
+	    if (!in_s.data) 
+	    {
+	      sleep(1);
+	      in_s = get_image_from_hikcam_resize(net.w, net.h, net.c, &in_img);
+	      if(!in_s.data) exit(-1);
+	    }
+	}
         else if (letter_box)
             in_s = get_image_from_stream_letterbox(cap, net.w, net.h, net.c, &in_img, dont_close_stream);
         else

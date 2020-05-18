@@ -17,6 +17,7 @@
 using namespace std;
 using namespace cv;
 cv::Mat dst_hik;
+//cv::Mat mat;
 LONG lUserID;
 //cv::Mat src;
 //cv::Mat* ptr
@@ -24,6 +25,8 @@ pthread_mutex_t dst_lock;//=PTHREAD_MUTEX_INITIALIZER;
 //pthread_mutex_init(&dst_lock,NULL);
 //extern mat_cv* dst_hik_ptr=(mat_cv*)&dst_hik;
 //extern "C" mat_cv* dst_hik_ptr;
+//cv::Mat new_img = cv::Mat(h, w, CV_8UC(c));
+cv::Mat new_img = cv::Mat();
 LONG nPort=-1;
 HWND h = NULL;
 std::list<cv::Mat> g_frameList;
@@ -33,7 +36,7 @@ extern "C" image mat_to_image(cv::Mat mat);
 
 void CALLBACK DecCBFun(LONG nPort, char *pBuf, LONG nSize, FRAME_INFO *pFrameInfo, void* nReserved1, LONG nReserved2)
 {
-   long lFrameType = pFrameInfo->nType;
+    long lFrameType = pFrameInfo->nType;
      //std::cerr << lFrameType << std::endl; 
      if (lFrameType == T_YV12)
      {
@@ -60,7 +63,6 @@ void CALLBACK DecCBFun(LONG nPort, char *pBuf, LONG nSize, FRAME_INFO *pFrameInf
            pthread_mutex_unlock(&dst_lock);
      }
     usleep(1000);
-     
    //cv::Mat src(pFrameInfo->nHeight + pFrameInfo->nHeight / 2, pFrameInfo->nWidth, CV_8UC1, (uchar *)pBuf);
    //cv::cvtColor(src, dst, CV_YUV2BGR_YV12);
    //cv::imshow("bgr", dst);
@@ -228,26 +230,18 @@ extern "C" image get_image_from_hikcam_resize(int w, int h, int c, mat_cv** in_i
     c = c ? c : 3;
     //cv::Mat *src = NULL;//lock it while returning 
     cv::Mat *src=NULL;
+    //cv::Mat mat;
+    //mat = new cv::Mat(h, w, CV_8UC(c));
     //src = new cv::Mat();
-    src = new cv::Mat(h, w, CV_8UC(c));
+    //src = new cv::Mat(h, w, CV_8UC(c));
     static int once = 1;
-   /* if (once) {
-        once = 0;
-        do {
-            //if (src) delete src;
-            //src = (cv::Mat*)get_capture_frame_cv(cap);
-            //src=(cv::Mat*)dst_hik_ptr;
-                pthread_mutex_lock(&dst_lock);
-                src=g_frameList.front();
-                pthread_mutex_unlock(&dst_lock);
-            if (!src.empty()) return make_empty_image(0, 0, 0);
-            //printf("get_image_from_hikcam!");
-        } while (src->cols < 1 || src->rows < 1 || src->channels() < 1);
-        printf("Video stream: %d x %d \n", src->cols, src->rows);
-    }*/
-    //src=(cv::Mat*)dst_hik_ptr;
+    new_img = cv::Mat(h, w, CV_8UC(c));
     pthread_mutex_lock(&dst_lock);
-    if (!g_frameList.front().empty()) 
+    src=(cv::Mat *)&g_frameList.front();
+    
+    //mat=g_frameList.front();
+    //pthread_mutex_unlock(&dst_lock);
+    /*if (!g_frameList.front().empty()) 
     {
       src=(cv::Mat *)&g_frameList.front();
       *in_img = (mat_cv *)new cv::Mat(src->rows, src->cols, CV_8UC(c));
@@ -257,26 +251,28 @@ extern "C" image get_image_from_hikcam_resize(int w, int h, int c, mat_cv** in_i
       {
         pthread_mutex_unlock(&dst_lock);
         return make_random_image(w, h, c);
-      }
-    //show_image_mat(*in_img, "in_img");
-    pthread_mutex_unlock(&dst_lock);
-    /*if (!src) 
-      {
-        printf("src is null!");
-        return make_empty_image(0, 0, 0);
       }*/
-    //*in_img = (mat_cv *)new cv::Mat(src->rows, src->cols, CV_8UC(c));
-    //*(cv::Mat **)in_img = ptr;
-    //std::cout<<"c:"<<c<<endl;
-    cv::Mat new_img = cv::Mat(h, w, CV_8UC(c));
-    if (!(*src).empty()) cv::resize(*src, new_img, new_img.size(), 0, 0, cv::INTER_LINEAR);
+    //show_image_mat(*in_img, "in_img");
+    if((*src).empty())
+    {   
+      pthread_mutex_unlock(&dst_lock);
+      return make_empty_image(0, 0, 0);
+    }
+    //src=(cv::Mat *)&mat;
+    *in_img = (mat_cv *)new cv::Mat(src->rows, src->cols, CV_8UC(c));
+    cv::resize(*src, **(cv::Mat**)in_img, (*(cv::Mat**)in_img)->size(), 0, 0, cv::INTER_LINEAR);   
+    //cv::Mat new_img = cv::Mat(h, w, CV_8UC(c));
+    cv::resize(*src, new_img, new_img.size(), 0, 0, cv::INTER_LINEAR);
+    pthread_mutex_unlock(&dst_lock);
     //if (c>1) cv::cvtColor(new_img, new_img, cv::COLOR_RGB2BGR);
     image im = mat_to_image(new_img);
     //cv::imshow("bgr", src);
     //cv::waitKey(10);
+    //delete src;
+    //delete mat;
     //release_mat((mat_cv **)&src);
     // show_image_mat(*in_img, "in_img");
-    if (!im.data) return make_random_image(w, h, c);
+    //if (!im.data) return make_random_image(w, h, c);
     return im; 
 }
 extern "C" int enalbe_hikcam_control(detection *dets,int num,float thresh,char **names, int classes)
@@ -308,7 +304,7 @@ extern "C" int enalbe_hikcam_control(detection *dets,int num,float thresh,char *
             }
             if (class_id>=0) std::cout<<"class_id"<<class_id<<"name:"<<names[class_id]<<std::endl;
             if (class_id >= 0 && strcmp(names[class_id],"person")==0) {
-                int tolerance=0.1;
+                int tolerance=0.2;
                 tracked=1;
                 box b = dets[i].bbox;
                 if (std::isnan(b.w) || std::isinf(b.w)) b.w = 0.5;
