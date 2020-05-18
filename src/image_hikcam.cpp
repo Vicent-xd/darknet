@@ -199,7 +199,7 @@ extern "C" int hikcam_init(char* ip, char* usr, char* password,int port)
         NET_DVR_Cleanup();
         return HPR_ERROR;
     }
-    printf("Init RealPlay SUCCESS\n");
+    //printf("Init RealPlay SUCCESS\n");
     int iRet=0;
     iRet = NET_DVR_SetRealDataCallBack(lRealPlayHandle, g_RealDataCallBack_V30,0);
     if (!iRet)
@@ -228,7 +228,8 @@ extern "C" image get_image_from_hikcam_resize(int w, int h, int c, mat_cv** in_i
     c = c ? c : 3;
     //cv::Mat *src = NULL;//lock it while returning 
     cv::Mat *src=NULL;
-    src = new cv::Mat();
+    //src = new cv::Mat();
+    src = new cv::Mat(h, w, CV_8UC(c));
     static int once = 1;
    /* if (once) {
         once = 0;
@@ -246,41 +247,50 @@ extern "C" image get_image_from_hikcam_resize(int w, int h, int c, mat_cv** in_i
     }*/
     //src=(cv::Mat*)dst_hik_ptr;
     pthread_mutex_lock(&dst_lock);
-    src=(cv::Mat *)&g_frameList.front();
-    *in_img = (mat_cv *)new cv::Mat(src->rows, src->cols, CV_8UC(c));
-    cv::resize(*src, **(cv::Mat**)in_img, (*(cv::Mat**)in_img)->size(), 0, 0, cv::INTER_LINEAR);
-   // std:cout<<src->rows<<src->cols<<std::endl;
+    if (!g_frameList.front().empty()) 
+    {
+      src=(cv::Mat *)&g_frameList.front();
+      *in_img = (mat_cv *)new cv::Mat(src->rows, src->cols, CV_8UC(c));
+      cv::resize(*src, **(cv::Mat**)in_img, (*(cv::Mat**)in_img)->size(), 0, 0, cv::INTER_LINEAR);
+    }
+    else 
+      {
+        pthread_mutex_unlock(&dst_lock);
+        return make_random_image(w, h, c);
+      }
     //show_image_mat(*in_img, "in_img");
     pthread_mutex_unlock(&dst_lock);
-    if (!src) 
+    /*if (!src) 
       {
         printf("src is null!");
         return make_empty_image(0, 0, 0);
-      }
+      }*/
     //*in_img = (mat_cv *)new cv::Mat(src->rows, src->cols, CV_8UC(c));
     //*(cv::Mat **)in_img = ptr;
-    std::cout<<"c:"<<c<<endl;
+    //std::cout<<"c:"<<c<<endl;
     cv::Mat new_img = cv::Mat(h, w, CV_8UC(c));
-    cv::resize(*src, new_img, new_img.size(), 0, 0, cv::INTER_LINEAR);
+    if (!(*src).empty()) cv::resize(*src, new_img, new_img.size(), 0, 0, cv::INTER_LINEAR);
     //if (c>1) cv::cvtColor(new_img, new_img, cv::COLOR_RGB2BGR);
     image im = mat_to_image(new_img);
     //cv::imshow("bgr", src);
     //cv::waitKey(10);
     //release_mat((mat_cv **)&src);
     // show_image_mat(*in_img, "in_img");
+    if (!im.data) return make_random_image(w, h, c);
     return im; 
 }
 extern "C" int enalbe_hikcam_control(detection *dets,int num,float thresh,char **names, int classes)
 {  
     int Ret=-1;
+    int tracked=0;
     try {
       int i, j;
       for (i = 0; i < num; ++i) {
             char labelstr[4096] = { 0 };
             int class_id = -1;
             for (j = 0; j < classes; ++j) {
-                int show = strncmp(names[j], "dont_show", 9);
-                if (dets[i].prob[j] > thresh && show) {
+                //int show = strncmp(names[j], "dont_show", 9);
+                if (dets[i].prob[j] > thresh) {
                     if (class_id < 0) {
                         strcat(labelstr, names[j]);
                         class_id = j;
@@ -294,11 +304,12 @@ extern "C" int enalbe_hikcam_control(detection *dets,int num,float thresh,char *
                         strcat(labelstr, names[j]);
                         //printf(", %s: %.0f%% ", names[j], dets[i].prob[j] * 100);
                     }
-
                 }
             }
-            if (class_id >= 0) {
-
+            if (class_id>=0) std::cout<<"class_id"<<class_id<<"name:"<<names[class_id]<<std::endl;
+            if (class_id >= 0 && strcmp(names[class_id],"person")==0) {
+                int tolerance=0.1;
+                tracked=1;
                 box b = dets[i].bbox;
                 if (std::isnan(b.w) || std::isinf(b.w)) b.w = 0.5;
                 if (std::isnan(b.h) || std::isinf(b.h)) b.h = 0.5;
@@ -309,21 +320,43 @@ extern "C" int enalbe_hikcam_control(detection *dets,int num,float thresh,char *
                 b.x = (b.x < 1) ? b.x : 1;
                 b.y = (b.y < 1) ? b.y : 1;
                 //NET_DVR_PTZControl_Other(lUserID, lChannel, dwPTZCommand, dwStop);
-                //BOOL Ret=0;
-	       	Ret=NET_DVR_PTZControl_Other(lUserID,1,PAN_LEFT,0);
+
+	       	      //Ret=NET_DVR_PTZControl_Other(lUserID,1,PAN_LEFT,0);
+                //stop condition
+                if (b.x>=(0.5-tolerance) && b.x<=(0.5+tolerance) && b.y>=(0.5-tolerance) && b.y<=(0.5+tolerance))
+                {
+                  Ret=NET_DVR_PTZControl_Other(lUserID,1,PAN_LEFT,1);//no need to adjust
+                }
+                else
+                {
+                  //1.up,down condition
+                  if (abs(b.x-0.5)<abs(b.y-0.5))
+                  {
+                    if (b.y<(0.5-tolerance)) Ret=NET_DVR_PTZControl_Other(lUserID,1,TILT_UP,0);//uper
+                    if (b.y>(0.5+tolerance)) Ret=NET_DVR_PTZControl_Other(lUserID,1,TILT_DOWN,0);//downer
+                    std::cout<<"up,down\n"<<std::endl;
+                  }
+                  //2.left,right condition
+                  else
+                  {
+                    if (b.x<(0.5-tolerance)) Ret=NET_DVR_PTZControl_Other(lUserID,1,PAN_LEFT,0);//lefter
+                    if (b.x>(0.5+tolerance)) Ret=NET_DVR_PTZControl_Other(lUserID,1,PAN_RIGHT,0);//righter
+                  }
+                }
+                break;//quit 1st loop after person has been found
             }
-            else
-            {
-	      //BOOL Ret=0;
-              Ret=NET_DVR_PTZControl_Other(lUserID,1,TILT_UP,1);
-              //stop control
-            }
-	    //return Ret;
-            
+
       }
+      if (tracked==0)
+      {
+        Ret=NET_DVR_PTZControl_Other(lUserID,1,TILT_UP,1);//no person in all box
+        std::cout<<"\nNo person in this frame! stop ptz\n"<<std::endl;
+      }
+      
     }
     catch (...) {
         std::cerr << "Hikcam_control exception: enalbe_hikcam_control() \n";
     }
+    std::cout<<"HIKCAM control ret:"<<Ret<<std::endl;
     return Ret;
 }

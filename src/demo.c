@@ -70,7 +70,6 @@ void *fetch_in_thread(void *ptr)
         if (hikcam==1)
         {
             in_s = get_image_from_hikcam_resize(net.w, net.h, net.c, &in_img);
-            printf("fetching!");
         }
         else if (letter_box)
             in_s = get_image_from_stream_letterbox(cap, net.w, net.h, net.c, &in_img, dont_close_stream);
@@ -146,6 +145,19 @@ double get_wall_time()
     return (double)walltime.tv_sec + (double)walltime.tv_usec * .000001;
 }
 
+void *hikcam_control_in_thread(void *ptr)
+{
+    while (!custom_atomic_load_int(&flag_exit))
+    {
+      while (custom_atomic_load_int(&run_detect_in_thread)) this_thread_sleep_for(thread_wait_ms);
+      //sleep(0.02);
+      int local_nboxes = nboxes;
+      detection *local_dets = dets;
+      enalbe_hikcam_control(local_dets,local_nboxes,demo_thresh,demo_names, demo_classes);
+    }
+    return 0;
+}
+
 void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int cam_index, const char *filename, char **names, int classes,
     int frame_skip, char *prefix, char *out_filename, int mjpeg_port, int dontdraw_bbox, int json_port, int dont_show, int ext_output, int letter_box_in, int time_limit_sec, char *http_post_host,
     int benchmark, int benchmark_layers)
@@ -156,6 +168,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
     //dont_show=1;
     image **alphabet = load_alphabet();
     int delay = frame_skip;
+    int once=1;//hikcam_control
     demo_names = names;
     demo_alphabet = alphabet;
     demo_classes = classes;
@@ -213,6 +226,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
 
     custom_thread_t fetch_thread = NULL;
     custom_thread_t detect_thread = NULL;
+    custom_thread_t control_thread = NULL;
     if (custom_create_thread(&fetch_thread, 0, fetch_in_thread, 0)) error("Thread creation failed");
     if (custom_create_thread(&detect_thread, 0, detect_in_thread, 0)) error("Thread creation failed");
 
@@ -304,11 +318,11 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
                     if (time_limit_sec > 0) send_http_post_once = 1;
                 }
             }
-            if (hikcam==1 && hikcontrol==1)
+            if (hikcam==1 && hikcontrol==1 && once==1)
             {
-                    //if (strcmp(names[j],"person")==0)//same
-                    //local_dets, local_nboxes,demo_names
-                    enalbe_hikcam_control(local_dets,local_nboxes,demo_thresh,demo_names, demo_classes);
+                    once=0;
+                    printf("Init Hikcam Control\n");
+                    if (custom_create_thread(&control_thread, 0, hikcam_control_in_thread, 0)) error("Control Thread creation failed");
             }
             
             if (!benchmark && !dontdraw_bbox) draw_detections_cv_v3(show_img, local_dets, local_nboxes, demo_thresh, demo_names, demo_alphabet, demo_classes, demo_ext_output);
@@ -318,7 +332,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
 
             if(!prefix){
                 if (!dont_show) {
-                    printf("in !prefix !dontshow loop");
+                    //printf("in !prefix !dontshow loop");
                     const int each_frame = max_val_cmp(1, avg_fps / 100);
                     if(global_frame_counter % each_frame == 0) show_image_mat(show_img, "Demo");
                     int c = wait_key_cv(1);
@@ -378,12 +392,10 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
             }
             det_img = in_img;
             det_s = in_s;
-            printf("Point1!");
         }
         --delay;
         if(delay < 0){
             delay = frame_skip;
-            printf("Point2!");
             //double after = get_wall_time();
             //float curr = 1./(after - before);
             double after = get_time_point();    // more accurate time measurements
@@ -400,9 +412,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
                 frame_counter = 0;
                 start_time = get_time_point();
             }
-            printf("Point3!");
         }
-        printf("Point4!");
     }
     printf("input video stream closed. \n");
     if (output_video_writer) {
@@ -411,15 +421,11 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
     }
 
     this_thread_sleep_for(thread_wait_ms);
-printf("Point4.1!");
     custom_join(detect_thread, 0);
-printf("Point4.2!");
     custom_join(fetch_thread, 0);
-printf("Point5!");
     // free memory
     free_image(in_s);
     free_detections(dets, nboxes);
-printf("Point6!");
     free(avg);
     for (j = 0; j < NFRAMES; ++j) free(predictions[j]);
     demo_index = (NFRAMES + demo_index - 1) % NFRAMES;
