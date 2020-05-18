@@ -224,7 +224,13 @@ extern "C" int hikcam_init(char* ip, char* usr, char* password,int port)
     //return (mat_cv*)img_ptr;
     return HPR_OK;    
 }
-
+extern "C" int hikcam_logout(void)
+{
+	NET_DVR_PTZControl_Other(lUserID,1,PAN_LEFT,1);
+        NET_DVR_Logout_V30(lUserID);
+        NET_DVR_Cleanup();
+	return 0;
+}
 extern "C" image get_image_from_hikcam_resize(int w, int h, int c, mat_cv** in_img)
 {
     c = c ? c : 3;
@@ -304,7 +310,7 @@ extern "C" int enalbe_hikcam_control(detection *dets,int num,float thresh,char *
             }
             if (class_id>=0) std::cout<<"class_id"<<class_id<<"name:"<<names[class_id]<<std::endl;
             if (class_id >= 0 && strcmp(names[class_id],"person")==0) {
-                int tolerance=0.2;
+                int tolerance=0.4;//0~0.5
                 tracked=1;
                 box b = dets[i].bbox;
                 if (std::isnan(b.w) || std::isinf(b.w)) b.w = 0.5;

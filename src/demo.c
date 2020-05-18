@@ -8,6 +8,7 @@
 #include "image.h"
 #include "demo.h"
 #include "darknet.h"
+#include <signal.h>
 #ifdef WIN32
 #include <time.h>
 #include "gettimeofday.h"
@@ -163,11 +164,18 @@ void *hikcam_control_in_thread(void *ptr)
     }
     return 0;
 }
-
+void Stop(int signal)
+{
+	printf("exiting\n");
+        //NET_DVR_PTZControl_Other(lUserID,1,TILT_UP,1);
+        hikcam_logout();	
+	_exit(0);
+}
 void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int cam_index, const char *filename, char **names, int classes,
     int frame_skip, char *prefix, char *out_filename, int mjpeg_port, int dontdraw_bbox, int json_port, int dont_show, int ext_output, int letter_box_in, int time_limit_sec, char *http_post_host,
     int benchmark, int benchmark_layers)
 {
+    signal(SIGINT,Stop);
     letter_box = letter_box_in;
     in_img = det_img = show_img = NULL;
     //skip = frame_skip;
