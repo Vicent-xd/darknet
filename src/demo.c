@@ -8,6 +8,7 @@
 #include "image.h"
 #include "demo.h"
 #include "darknet.h"
+#include "myptz.h"
 #ifdef WIN32
 #include <time.h>
 #include "gettimeofday.h"
@@ -52,7 +53,7 @@ static int letter_box = 0;
 static const int thread_wait_ms = 1;
 static volatile int run_fetch_in_thread = 0;
 static volatile int run_detect_in_thread = 0;
-
+int hikcontrol=1;
 
 void *fetch_in_thread(void *ptr)
 {
@@ -129,7 +130,25 @@ double get_wall_time()
     }
     return (double)walltime.tv_sec + (double)walltime.tv_usec * .000001;
 }
-
+void *hikcam_control_in_thread(void *ptr)
+{
+    while (!custom_atomic_load_int(&flag_exit))
+    {
+      while (custom_atomic_load_int(&run_detect_in_thread)) this_thread_sleep_for(thread_wait_ms);
+      //sleep(0.02);
+      int local_nboxes = nboxes;
+      detection *local_dets = dets;
+      enalbe_hikcam_control(local_dets,local_nboxes,demo_thresh,demo_names, demo_classes);
+    }
+    return 0;
+}
+void Stop(int signal)
+{
+	printf("exiting\n");
+        //NET_DVR_PTZControl_Other(lUserID,1,TILT_UP,1);
+        hikcam_logout();	
+	_exit(0);
+}
 void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int cam_index, const char *filename, char **names, int classes, int avgframes,
     int frame_skip, char *prefix, char *out_filename, int mjpeg_port, int dontdraw_bbox, int json_port, int dont_show, int ext_output, int letter_box_in, int time_limit_sec, char *http_post_host,
     int benchmark, int benchmark_layers)
@@ -141,6 +160,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
     //skip = frame_skip;
     image **alphabet = load_alphabet();
     int delay = frame_skip;
+    int once=1;
     demo_names = names;
     demo_alphabet = alphabet;
     demo_classes = classes;
@@ -160,6 +180,11 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
     if(filename){
         printf("video file: %s\n", filename);
         cap = get_capture_video_stream(filename);
+        if (hikcontrol==1) {
+            onvif_init("192.168.100.145");
+            sleep(5);
+            printf("Hikcam enabled\n");
+        }
     }else{
         printf("Webcam index: %d\n", cam_index);
         cap = get_capture_webcam(cam_index);
@@ -196,6 +221,7 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
 
     custom_thread_t fetch_thread = NULL;
     custom_thread_t detect_thread = NULL;
+    custom_thread_t control_thread = NULL;
     if (custom_create_thread(&fetch_thread, 0, fetch_in_thread, 0)) error("Thread creation failed");
     if (custom_create_thread(&detect_thread, 0, detect_in_thread, 0)) error("Thread creation failed");
 
@@ -288,7 +314,12 @@ void demo(char *cfgfile, char *weightfile, float thresh, float hier_thresh, int 
                     if (time_limit_sec > 0) send_http_post_once = 1;
                 }
             }
-
+            if (hikcontrol==1 && once==1)
+            {
+                    once=0;
+                    printf("Init Hikcam Control\n");
+                    if (custom_create_thread(&control_thread, 0, hikcam_control_in_thread, 0)) error("Control Thread creation failed");
+            }
             if (!benchmark && !dontdraw_bbox) draw_detections_cv_v3(show_img, local_dets, local_nboxes, demo_thresh, demo_names, demo_alphabet, demo_classes, demo_ext_output);
             free_detections(local_dets, local_nboxes);
 
