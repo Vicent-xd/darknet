@@ -4,7 +4,8 @@
 #include "soapH.h"
 #include "wsseapi.h"
 #include "wsaapi.h"
-#include "MediaBinding.nsmap"
+//#include "MediaBinding.nsmap"
+#include "darknet.h"
 
 SOAP_FMAC3 struct tt__PTZVector * SOAP_FMAC4 soap_new_tt__PTZVector(struct soap *soap, int n);
 SOAP_FMAC3 struct tt__Vector2D * SOAP_FMAC4 soap_new_tt__Vector2D(struct soap *soap, int n);

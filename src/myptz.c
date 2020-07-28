@@ -8,6 +8,8 @@
 #include "myptz.h"
 //#ifndef IMAGE_OPENCV_H
 #include "image_opencv.h"
+#include "image.h"
+#include "math.h"
 //#endif
 //宏定义设备鉴权的用户名和密码
 //注意对于海康相机而言，鉴权的用户名和密码需要单独设置，不一定等同于登录账户密码
@@ -361,16 +363,21 @@ int enalbe_hikcam_control(detection *dets,int num,float thresh,char **names, int
                 }
             }
         }
-        if (class_id>=0) std::cout<<"class_id"<<class_id<<"name:"<<names[class_id]<<std::endl;
+        if (class_id>=0) printf("class_id:%d,name:%s",class_id,names[class_id]);//std::cout<<"class_id"<<class_id<<"name:"<<names[class_id]<<std::endl;
         if (class_id >= 0 && strcmp(names[class_id],"person")==0) {
             int tolerance=0.4;//0~0.5
             tracked=1;
             box b = dets[i].bbox;
-            if (std::isnan(b.w) || std::isinf(b.w)) b.w = 0.5;
+            /*if (std::isnan(b.w) || std::isinf(b.w)) b.w = 0.5;
             if (std::isnan(b.h) || std::isinf(b.h)) b.h = 0.5;
             if (std::isnan(b.x) || std::isinf(b.x)) b.x = 0.5;
             if (std::isnan(b.y) || std::isinf(b.y)) b.y = 0.5;
-            b.w = (b.w < 1) ? b.w : 1;
+            */
+	    if (isnan(b.w)==1 || isinf(b.w)!=0) b.w=0.5;
+	    if (isnan(b.h)==1 || isinf(b.h)!=0) b.h=0.5;
+	    if (isnan(b.x)==1 || isinf(b.x)!=0) b.x=0.5;
+	    if (isnan(b.y)==1 || isinf(b.y)!=0) b.y=0.5; 
+	    b.w = (b.w < 1) ? b.w : 1;
             b.h = (b.h < 1) ? b.h : 1;
             b.x = (b.x < 1) ? b.x : 1;
             b.y = (b.y < 1) ? b.y : 1;
@@ -389,7 +396,7 @@ int enalbe_hikcam_control(detection *dets,int num,float thresh,char **names, int
                 {
                 if (b.y<(0.5-tolerance)) Ret=tilt_up();//NET_DVR_PTZControl_Other(lUserID,1,TILT_UP,0);//uper
                 if (b.y>(0.5+tolerance)) Ret=tilt_down();//NET_DVR_PTZControl_Other(lUserID,1,TILT_DOWN,0);//downer
-                std::cout<<"up,down\n"<<std::endl;
+                //std::cout<<"up,down\n"<<std::endl;
                 }
                 //2.left,right condition
                 else
