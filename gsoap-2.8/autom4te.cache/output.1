@@ -734,6 +734,7 @@ infodir
 docdir
 oldincludedir
 includedir
+runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -818,6 +819,7 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
+runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
@@ -1070,6 +1072,15 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
+  -runstatedir | --runstatedir | --runstatedi | --runstated \
+  | --runstate | --runstat | --runsta | --runst | --runs \
+  | --run | --ru | --r)
+    ac_prev=runstatedir ;;
+  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
+  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
+  | --run=* | --ru=* | --r=*)
+    runstatedir=$ac_optarg ;;
+
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1207,7 +1218,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir
+		libdir localedir mandir runstatedir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1360,6 +1371,7 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -2365,7 +2377,7 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-am__api_version='1.14'
+am__api_version='1.15'
 
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
@@ -2566,8 +2578,8 @@ test "$program_suffix" != NONE &&
 ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
 program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
 
-# expand $ac_aux_dir to an absolute path
-am_aux_dir=`cd $ac_aux_dir && pwd`
+# Expand $ac_aux_dir to an absolute path.
+am_aux_dir=`cd "$ac_aux_dir" && pwd`
 
 if test x"${MISSING+set}" != xset; then
   case $am_aux_dir in
@@ -2586,7 +2598,7 @@ else
 $as_echo "$as_me: WARNING: 'missing' script is too old or missing" >&2;}
 fi
 
-if test x"${install_sh}" != xset; then
+if test x"${install_sh+set}" != xset; then
   case $am_aux_dir in
   *\ * | *\	*)
     install_sh="\${SHELL} '$am_aux_dir/install-sh'" ;;
@@ -2914,8 +2926,8 @@ MAKEINFO=${MAKEINFO-"${am_missing_run}makeinfo"}
 # <http://lists.gnu.org/archive/html/automake/2012-07/msg00014.html>
 mkdir_p='$(MKDIR_P)'
 
-# We need awk for the "check" target.  The system "awk" is bad on
-# some platforms.
+# We need awk for the "check" target (and possibly the TAP driver).  The
+# system "awk" is bad on some platforms.
 # Always define AMTAR for backward compatibility.  Yes, it's still used
 # in the wild :-(  We should find a proper way to deprecate it ...
 AMTAR='$${TAR-tar}'
@@ -2972,6 +2984,7 @@ END
     as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
   fi
 fi
+
 
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
@@ -5006,7 +5019,7 @@ SAMPLE_EXTRA_LIBS="-lm"
 case "${host}" in
         *-*-solaris*)   platform=SUN_OS 
 			SAMPLE_EXTRA_LIBS="-lxnet -lsocket -lnsl -lm"
-			WSDL2H_EXTRA_LIBS="-lssl -lcrypto -lz -lsocket -lxnet -lnsl -lrt"
+			WSDL2H_EXTRA_LIBS="-lxnet -lsocket -lnsl -lrt"
 			;;
         *-*-sysv5*)     platform=UNIXWARE ;;
         *-*-UnixWare*)  platform=UNIXWARE ;;
@@ -5024,7 +5037,7 @@ case "${host}" in
 	*-*-cygwin*)	platform=CYGWIN ;;
 	*-*-mingw*)	platform=MINGW
 			SAMPLE_EXTRA_LIBS="-lws2_32 -lkernel32 -luser32 -lgdi32 -lm"
-			WSDL2H_EXTRA_LIBS="-lssl -lcrypto -lws2_32 -lkernel32 -luser32 -lgdi32 -lm"
+			WSDL2H_EXTRA_LIBS="-lws2_32 -lkernel32 -luser32 -lgdi32 -lm"
 			;;
         *-*-freebsd*)   platform=FREEBSD ;;
         *-*-openbsd*)   platform=OPENBSD ;;
@@ -5327,7 +5340,7 @@ fi
 done
 
 
-for ac_header in arpa/inet.h xlocale.h errno.h fcntl.h limits.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h inttypes.h time.h sys/inttypes.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h
+for ac_header in arpa/inet.h xlocale.h errno.h fcntl.h ctype.h limits.h float.h math.h netdb.h netinet/in.h stdlib.h string.h strings.h stdint.h inttypes.h time.h sys/inttypes.h sys/socket.h sys/types.h sys/time.h sys/timeb.h unistd.h poll.h openssl/ssl.h gnutls/gnutls.h zlib.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -6096,12 +6109,12 @@ fi
 
 
 # set the default soapcpp2 import path
-SOAPCPP2_IMPORTPATH="-DSOAPCPP_IMPORT_PATH=\"\\\"${datadir}/gsoap/import\\\"\""
+SOAPCPP2_IMPORTPATH="-DSOAPCPP2_IMPORT_PATH=\"\\\"${datadir}/gsoap/import\\\"\""
 #SOAPCPP2_IMPORTPATH="-DSOAPCPP2_IMPORT_PATH=\"\\\"`pwd`/gsoap/import\\\"\""
 
 
 # set the default wsdl2h import path
-WSDL2H_IMPORTPATH="-DWSDL_IMPORT_PATH=\"\\\"${datadir}/gsoap/WS\\\"\""
+WSDL2H_IMPORTPATH="-DWSDL2H_IMPORT_PATH=\"\\\"${datadir}/gsoap/WS\\\"\""
 #WSDL2H_IMPORTPATH="-DWSDL2H_IMPORT_PATH=\"\\\"`pwd`/gsoap/WS\\\"\""
 
 
@@ -6131,9 +6144,9 @@ fi
 # library compilation thus enabling IPv6
 @%:@ Check whether --enable-ipv6 was given.
 if test "${enable_ipv6+set}" = set; then :
-  enableval=$enable_ipv6; with_ipv6="yes"
+  enableval=$enable_ipv6; with_ipv6="$enable_ipv6"
 else
-  with_ipv6="$disable_ipv6"
+  with_ipv6="no"
 fi
 
 
@@ -6169,9 +6182,9 @@ fi
 # the enable-gnutls option enables GNUTLS in favor of OpenSSL
 @%:@ Check whether --enable-gnutls was given.
 if test "${enable_gnutls+set}" = set; then :
-  enableval=$enable_gnutls; with_gnutls="yes"
+  enableval=$enable_gnutls; with_gnutls="$enable_gnutls"
 else
-  with_gnutls="$disable_gnutls"
+  with_gnutls="no"
 fi
 
 
@@ -6186,7 +6199,7 @@ $as_echo_n "checking for enable gnutls in library... " >&6; }
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
     WSDL2H_EXTRA_FLAGS="-DWITH_GNUTLS -DWITH_GZIP"
-    WSDL2H_EXTRA_LIBS="-lgnutls -lgcrypt -lgpg-error -lz"
+    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} -lgnutls -lgcrypt -lgpg-error -lz"
     SAMPLE_INCLUDES=
     SAMPLE_SSL_LIBS="-lgnutls -lgcrypt -lgpg-error -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
@@ -6196,7 +6209,7 @@ $as_echo "no" >&6; }
     WSDL2H_EXTRA_FLAGS="-DWITH_OPENSSL -DWITH_GZIP"
     # an ugly hack to get httpda and md5evp plugins to conditionally
     # compile with wsdl2h when OPENSSL is available
-    WSDL2H_EXTRA_LIBS="../plugin/httpda.c ../plugin/md5evp.c -lssl -lcrypto -lz"
+    WSDL2H_EXTRA_LIBS="${WSDL2H_EXTRA_LIBS} ../plugin/httpda.c ../plugin/md5evp.c ../plugin/threads.c -lssl -lcrypto -lz"
     SAMPLE_INCLUDES=
     SAMPLE_SSL_LIBS="-lssl -lcrypto -lz"
     WSDL2H_SOAP_CPP_LIB="libgsoapssl++.a"
@@ -6211,7 +6224,6 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
   WSDL2H_EXTRA_FLAGS=
-  WSDL2H_EXTRA_LIBS=
   SAMPLE_SSL_LIBS=
   SAMPLE_INCLUDES=
   WSDL2H_SOAP_CPP_LIB="libgsoap++.a"

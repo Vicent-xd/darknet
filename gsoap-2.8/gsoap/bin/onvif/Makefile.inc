@@ -11,7 +11,7 @@ CFLAGS += -c -g -Wall -DWITH_DOM -DWITH_OPENSSL -DDEBUG
 CFLAGS += $(INCLUDE)
 
 # openssl目录名
-OPENSSL_DIR = /usr/local/ssl
+OPENSSL_DIR = /usr/local/openssl
 # 源文件
 SOURCES_ONVIF += \
            ../onvif/soapC.c                          \
