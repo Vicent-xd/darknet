@@ -1,7 +1,7 @@
-GPU=0
-CUDNN=0
-CUDNN_HALF=0
-OPENCV=0
+GPU=1
+CUDNN=1
+CUDNN_HALF=1
+OPENCV=1
 AVX=0
 OPENMP=0
 LIBSO=0
@@ -17,7 +17,7 @@ ONVIF_CONTROL=1
 USE_CPP=0
 DEBUG=0
 
-ARCH= -gencode arch=compute_30,code=sm_30 \
+#ARCH= -gencode arch=compute_30,code=sm_30 \
       -gencode arch=compute_35,code=sm_35 \
       -gencode arch=compute_50,code=[sm_50,compute_50] \
       -gencode arch=compute_52,code=[sm_52,compute_52] \
@@ -32,7 +32,7 @@ OS := $(shell uname)
 # ARCH= -gencode arch=compute_75,code=[sm_75,compute_75]
 
 # Jetson XAVIER
-# ARCH= -gencode arch=compute_72,code=[sm_72,compute_72]
+ARCH= -gencode arch=compute_72,code=[sm_72,compute_72]
 
 # GTX 1080, GTX 1070, GTX 1060, GTX 1050, GTX 1030, Titan Xp, Tesla P40, Tesla P4
 # ARCH= -gencode arch=compute_61,code=sm_61 -gencode arch=compute_61,code=compute_61
@@ -137,7 +137,7 @@ endif
 endif
 
 ifeq ($(ONVIF_CONTROL),1)
-OPENSSL_DIR = /usr/local/ssl
+OPENSSL_DIR = /usr/local/openssl
 INCLUDE += -I./src -I$(OPENSSL_DIR)/include
 SOURCES_ONVIF := ./src/soapC.c    \
 		./src/soapClient.c                     \

@@ -10,8 +10,8 @@ compiling, linking, and/or using OpenSSL is allowed.
 
 #ifndef soapStub_H
 #define soapStub_H
-#define SOAP_NAMESPACE_OF_wsc	"http://schemas.xmlsoap.org/ws/2005/02/sc"
 #define SOAP_WSA_2005
+#define SOAP_NAMESPACE_OF_wsc	"http://schemas.xmlsoap.org/ws/2005/02/sc"
 #define SOAP_NAMESPACE_OF_tds	"http://www.onvif.org/ver10/device/wsdl"
 #define SOAP_NAMESPACE_OF_tt	"http://www.onvif.org/ver10/schema"
 #define SOAP_NAMESPACE_OF_wsnt	"http://docs.oasis-open.org/wsn/b-2"
@@ -38,45 +38,45 @@ extern "C" {
 \******************************************************************************/
 
 
-#ifndef SOAP_TYPE_wsu__tTimestampFault
-#define SOAP_TYPE_wsu__tTimestampFault (7)
-/* wsu:tTimestampFault */
-enum wsu__tTimestampFault { wsu__MessageExpired = 0 };
-typedef enum wsu__tTimestampFault wsu__tTimestampFault;
-#endif
-
-#ifndef SOAP_TYPE_wsse__FaultcodeEnum
-#define SOAP_TYPE_wsse__FaultcodeEnum (9)
-/* wsse:FaultcodeEnum */
-enum wsse__FaultcodeEnum { wsse__UnsupportedSecurityToken = 0, wsse__UnsupportedAlgorithm = 1, wsse__InvalidSecurity = 2, wsse__InvalidSecurityToken = 3, wsse__FailedAuthentication = 4, wsse__FailedCheck = 5, wsse__SecurityTokenUnavailable = 6 };
-typedef enum wsse__FaultcodeEnum wsse__FaultcodeEnum;
-#endif
-
-#ifndef SOAP_TYPE_wsc__FaultCodeType
-#define SOAP_TYPE_wsc__FaultCodeType (82)
-/* wsc:FaultCodeType */
-enum wsc__FaultCodeType { wsc__BadContextToken = 0, wsc__UnsupportedContextToken = 1, wsc__UnknownDerivationSource = 2, wsc__RenewNeeded = 3, wsc__UnableToRenew = 4 };
-#endif
-
 #ifndef SOAP_TYPE_wsa5__RelationshipType
-#define SOAP_TYPE_wsa5__RelationshipType (112)
+#define SOAP_TYPE_wsa5__RelationshipType (18)
 /* wsa5:RelationshipType */
 enum wsa5__RelationshipType { http_x003a_x002f_x002fwww_x002ew3_x002eorg_x002f2005_x002f08_x002faddressing_x002freply = 0 };
 typedef enum wsa5__RelationshipType wsa5__RelationshipType;
 #endif
 
 #ifndef SOAP_TYPE_wsa5__FaultCodesType
-#define SOAP_TYPE_wsa5__FaultCodesType (113)
+#define SOAP_TYPE_wsa5__FaultCodesType (19)
 /* wsa5:FaultCodesType */
 enum wsa5__FaultCodesType { wsa5__InvalidAddressingHeader = 0, wsa5__InvalidAddress = 1, wsa5__InvalidEPR = 2, wsa5__InvalidCardinality = 3, wsa5__MissingAddressInEPR = 4, wsa5__DuplicateMessageID = 5, wsa5__ActionMismatch = 6, wsa5__MessageAddressingHeaderRequired = 7, wsa5__DestinationUnreachable = 8, wsa5__ActionNotSupported = 9, wsa5__EndpointUnavailable = 10 };
 typedef enum wsa5__FaultCodesType wsa5__FaultCodesType;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__IsReferenceParameter
-#define SOAP_TYPE__wsa5__IsReferenceParameter (131)
+#define SOAP_TYPE__wsa5__IsReferenceParameter (39)
 /* wsa5:IsReferenceParameter */
 enum _wsa5__IsReferenceParameter { _wsa5__IsReferenceParameter__false = 0, _wsa5__IsReferenceParameter__true = 1 };
 typedef enum _wsa5__IsReferenceParameter _wsa5__IsReferenceParameter;
+#endif
+
+#ifndef SOAP_TYPE_wsu__tTimestampFault
+#define SOAP_TYPE_wsu__tTimestampFault (56)
+/* wsu:tTimestampFault */
+enum wsu__tTimestampFault { wsu__MessageExpired = 0 };
+typedef enum wsu__tTimestampFault wsu__tTimestampFault;
+#endif
+
+#ifndef SOAP_TYPE_wsse__FaultcodeEnum
+#define SOAP_TYPE_wsse__FaultcodeEnum (58)
+/* wsse:FaultcodeEnum */
+enum wsse__FaultcodeEnum { wsse__UnsupportedSecurityToken = 0, wsse__UnsupportedAlgorithm = 1, wsse__InvalidSecurity = 2, wsse__InvalidSecurityToken = 3, wsse__FailedAuthentication = 4, wsse__FailedCheck = 5, wsse__SecurityTokenUnavailable = 6 };
+typedef enum wsse__FaultcodeEnum wsse__FaultcodeEnum;
+#endif
+
+#ifndef SOAP_TYPE_wsc__FaultCodeType
+#define SOAP_TYPE_wsc__FaultCodeType (130)
+/* wsc:FaultCodeType */
+enum wsc__FaultCodeType { wsc__BadContextToken = 0, wsc__UnsupportedContextToken = 1, wsc__UnknownDerivationSource = 2, wsc__RenewNeeded = 3, wsc__UnableToRenew = 4 };
 #endif
 
 #ifndef SOAP_TYPE_xsd__boolean
@@ -449,8 +449,165 @@ typedef LONG64 xsd__duration;
 
 #endif
 
+#ifndef SOAP_TYPE__xop__Include
+#define SOAP_TYPE__xop__Include (7)
+/* Base64 schema type: */
+struct _xop__Include
+{
+	unsigned char *__ptr;
+	int __size;
+	char *id;	/* optional element of type xsd:string */
+	char *type;	/* optional element of type xsd:string */
+	char *options;	/* optional element of type xsd:string */
+};
+typedef struct _xop__Include _xop__Include;
+#endif
+
+#ifndef SOAP_TYPE_wsa5__EndpointReferenceType
+#define SOAP_TYPE_wsa5__EndpointReferenceType (11)
+/* wsa5:EndpointReferenceType */
+struct wsa5__EndpointReferenceType
+{
+	char *Address;	/* required element of type xsd:string */
+	struct wsa5__ReferenceParametersType *ReferenceParameters;	/* optional element of type wsa5:ReferenceParametersType */
+	struct wsa5__MetadataType *Metadata;	/* optional element of type wsa5:MetadataType */
+	int __size;	/* sequence of elements <-any> */
+	char **__any;
+	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
+};
+typedef struct wsa5__EndpointReferenceType wsa5__EndpointReferenceType;
+#endif
+
+#ifndef SOAP_TYPE_wsa5__ReferenceParametersType
+#define SOAP_TYPE_wsa5__ReferenceParametersType (12)
+/* wsa5:ReferenceParametersType */
+struct wsa5__ReferenceParametersType
+{
+	int *chan__ChannelInstance;	/* optional element of type xsd:int */
+	int __size;	/* sequence of elements <-any> */
+	char **__any;
+	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
+};
+typedef struct wsa5__ReferenceParametersType wsa5__ReferenceParametersType;
+#endif
+
+#ifndef SOAP_TYPE_wsa5__MetadataType
+#define SOAP_TYPE_wsa5__MetadataType (13)
+/* wsa5:MetadataType */
+struct wsa5__MetadataType
+{
+	int __size;	/* sequence of elements <-any> */
+	char **__any;
+	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
+};
+typedef struct wsa5__MetadataType wsa5__MetadataType;
+#endif
+
+#ifndef SOAP_TYPE_wsa5__ProblemActionType
+#define SOAP_TYPE_wsa5__ProblemActionType (15)
+/* wsa5:ProblemActionType */
+struct wsa5__ProblemActionType
+{
+	char *Action;	/* optional element of type xsd:string */
+	char *SoapAction;	/* optional element of type xsd:string */
+	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
+};
+typedef struct wsa5__ProblemActionType wsa5__ProblemActionType;
+#endif
+
+#ifndef SOAP_TYPE_wsa5__RelatesToType
+#define SOAP_TYPE_wsa5__RelatesToType (14)
+/* Primitive wsa5:RelatesToType schema type: */
+struct wsa5__RelatesToType
+{
+	char *__item;
+	char *RelationshipType;	/* optional attribute of type wsa5:RelationshipTypeOpenEnum */
+	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
+};
+typedef struct wsa5__RelatesToType wsa5__RelatesToType;
+#endif
+
+#ifndef SOAP_TYPE_chan__ChannelInstanceType
+#define SOAP_TYPE_chan__ChannelInstanceType (40)
+/* Primitive chan:ChannelInstanceType schema type: */
+struct chan__ChannelInstanceType
+{
+	int __item;
+	enum _wsa5__IsReferenceParameter wsa5__IsReferenceParameter;	/* optional attribute of type wsa5:IsReferenceParameter */
+};
+#endif
+
+#ifndef WITH_NOGLOBAL
+
+#ifndef SOAP_TYPE_SOAP_ENV__Header
+#define SOAP_TYPE_SOAP_ENV__Header (41)
+/* SOAP Header: */
+struct SOAP_ENV__Header
+{
+	char *wsa5__MessageID;	/* optional element of type wsa5:MessageID */
+	struct wsa5__RelatesToType *wsa5__RelatesTo;	/* optional element of type wsa5:RelatesTo */
+	struct wsa5__EndpointReferenceType *wsa5__From;	/* optional element of type wsa5:From */
+	struct wsa5__EndpointReferenceType *wsa5__ReplyTo;	/* mustUnderstand */
+	struct wsa5__EndpointReferenceType *wsa5__FaultTo;	/* mustUnderstand */
+	char *wsa5__To;	/* mustUnderstand */
+	char *wsa5__Action;	/* mustUnderstand */
+	struct chan__ChannelInstanceType *chan__ChannelInstance;	/* optional element of type chan:ChannelInstanceType */
+	struct _wsse__Security *wsse__Security;	/* mustUnderstand */
+};
+#endif
+
+#endif
+
+#ifndef WITH_NOGLOBAL
+
+#ifndef SOAP_TYPE_SOAP_ENV__Code
+#define SOAP_TYPE_SOAP_ENV__Code (49)
+/* SOAP Fault Code: */
+struct SOAP_ENV__Code
+{
+	char *SOAP_ENV__Value;	/* optional element of type xsd:QName */
+	struct SOAP_ENV__Code *SOAP_ENV__Subcode;	/* optional element of type SOAP-ENV:Code */
+};
+#endif
+
+#endif
+
+#ifndef WITH_NOGLOBAL
+
+#ifndef SOAP_TYPE_SOAP_ENV__Reason
+#define SOAP_TYPE_SOAP_ENV__Reason (51)
+/* SOAP-ENV:Reason */
+struct SOAP_ENV__Reason
+{
+	char *SOAP_ENV__Text;	/* optional element of type xsd:string */
+};
+#endif
+
+#endif
+
+#ifndef WITH_NOGLOBAL
+
+#ifndef SOAP_TYPE_SOAP_ENV__Fault
+#define SOAP_TYPE_SOAP_ENV__Fault (55)
+/* SOAP Fault: */
+struct SOAP_ENV__Fault
+{
+	char *faultcode;	/* optional element of type xsd:QName */
+	char *faultstring;	/* optional element of type xsd:string */
+	char *faultactor;	/* optional element of type xsd:string */
+	struct SOAP_ENV__Detail *detail;	/* optional element of type SOAP-ENV:Detail */
+	struct SOAP_ENV__Code *SOAP_ENV__Code;	/* optional element of type SOAP-ENV:Code */
+	struct SOAP_ENV__Reason *SOAP_ENV__Reason;	/* optional element of type SOAP-ENV:Reason */
+	char *SOAP_ENV__Node;	/* optional element of type xsd:string */
+	char *SOAP_ENV__Role;	/* optional element of type xsd:string */
+	struct SOAP_ENV__Detail *SOAP_ENV__Detail;	/* optional element of type SOAP-ENV:Detail */
+};
+#endif
+
+#endif
+
 #ifndef SOAP_TYPE__wsu__Timestamp
-#define SOAP_TYPE__wsu__Timestamp (8)
+#define SOAP_TYPE__wsu__Timestamp (57)
 /* wsu:Timestamp */
 struct _wsu__Timestamp
 {
@@ -462,7 +619,7 @@ typedef struct _wsu__Timestamp _wsu__Timestamp;
 #endif
 
 #ifndef SOAP_TYPE__wsse__UsernameToken
-#define SOAP_TYPE__wsse__UsernameToken (10)
+#define SOAP_TYPE__wsse__UsernameToken (59)
 /* wsse:UsernameToken */
 struct _wsse__UsernameToken
 {
@@ -476,7 +633,7 @@ typedef struct _wsse__UsernameToken _wsse__UsernameToken;
 #endif
 
 #ifndef SOAP_TYPE__wsse__BinarySecurityToken
-#define SOAP_TYPE__wsse__BinarySecurityToken (13)
+#define SOAP_TYPE__wsse__BinarySecurityToken (62)
 /* Primitive wsse:BinarySecurityToken schema type: */
 struct _wsse__BinarySecurityToken
 {
@@ -489,7 +646,7 @@ typedef struct _wsse__BinarySecurityToken _wsse__BinarySecurityToken;
 #endif
 
 #ifndef SOAP_TYPE__wsse__Reference
-#define SOAP_TYPE__wsse__Reference (14)
+#define SOAP_TYPE__wsse__Reference (63)
 /* wsse:Reference */
 struct _wsse__Reference
 {
@@ -500,7 +657,7 @@ typedef struct _wsse__Reference _wsse__Reference;
 #endif
 
 #ifndef SOAP_TYPE__wsse__Embedded
-#define SOAP_TYPE__wsse__Embedded (15)
+#define SOAP_TYPE__wsse__Embedded (64)
 /* wsse:Embedded */
 struct _wsse__Embedded
 {
@@ -511,7 +668,7 @@ typedef struct _wsse__Embedded _wsse__Embedded;
 #endif
 
 #ifndef SOAP_TYPE__wsse__KeyIdentifier
-#define SOAP_TYPE__wsse__KeyIdentifier (16)
+#define SOAP_TYPE__wsse__KeyIdentifier (65)
 /* Primitive wsse:KeyIdentifier schema type: */
 struct _wsse__KeyIdentifier
 {
@@ -524,7 +681,7 @@ typedef struct _wsse__KeyIdentifier _wsse__KeyIdentifier;
 #endif
 
 #ifndef SOAP_TYPE__wsse__SecurityTokenReference
-#define SOAP_TYPE__wsse__SecurityTokenReference (17)
+#define SOAP_TYPE__wsse__SecurityTokenReference (66)
 /* wsse:SecurityTokenReference */
 struct _wsse__SecurityTokenReference
 {
@@ -540,7 +697,7 @@ typedef struct _wsse__SecurityTokenReference _wsse__SecurityTokenReference;
 #endif
 
 #ifndef SOAP_TYPE_ds__SignatureType
-#define SOAP_TYPE_ds__SignatureType (23)
+#define SOAP_TYPE_ds__SignatureType (72)
 /* ds:SignatureType */
 struct ds__SignatureType
 {
@@ -553,7 +710,7 @@ typedef struct ds__SignatureType ds__SignatureType;
 #endif
 
 #ifndef SOAP_TYPE__c14n__InclusiveNamespaces
-#define SOAP_TYPE__c14n__InclusiveNamespaces (33)
+#define SOAP_TYPE__c14n__InclusiveNamespaces (82)
 /* c14n:InclusiveNamespaces */
 struct _c14n__InclusiveNamespaces
 {
@@ -563,7 +720,7 @@ typedef struct _c14n__InclusiveNamespaces _c14n__InclusiveNamespaces;
 #endif
 
 #ifndef SOAP_TYPE_ds__TransformType
-#define SOAP_TYPE_ds__TransformType (34)
+#define SOAP_TYPE_ds__TransformType (83)
 /* ds:TransformType */
 struct ds__TransformType
 {
@@ -575,7 +732,7 @@ typedef struct ds__TransformType ds__TransformType;
 #endif
 
 #ifndef SOAP_TYPE_ds__KeyInfoType
-#define SOAP_TYPE_ds__KeyInfoType (26)
+#define SOAP_TYPE_ds__KeyInfoType (75)
 /* ds:KeyInfoType */
 struct ds__KeyInfoType
 {
@@ -590,7 +747,7 @@ typedef struct ds__KeyInfoType ds__KeyInfoType;
 #endif
 
 #ifndef SOAP_TYPE_ds__SignedInfoType
-#define SOAP_TYPE_ds__SignedInfoType (24)
+#define SOAP_TYPE_ds__SignedInfoType (73)
 /* ds:SignedInfoType */
 struct ds__SignedInfoType
 {
@@ -604,7 +761,7 @@ typedef struct ds__SignedInfoType ds__SignedInfoType;
 #endif
 
 #ifndef SOAP_TYPE_ds__CanonicalizationMethodType
-#define SOAP_TYPE_ds__CanonicalizationMethodType (29)
+#define SOAP_TYPE_ds__CanonicalizationMethodType (78)
 /* ds:CanonicalizationMethodType */
 struct ds__CanonicalizationMethodType
 {
@@ -615,7 +772,7 @@ typedef struct ds__CanonicalizationMethodType ds__CanonicalizationMethodType;
 #endif
 
 #ifndef SOAP_TYPE_ds__SignatureMethodType
-#define SOAP_TYPE_ds__SignatureMethodType (30)
+#define SOAP_TYPE_ds__SignatureMethodType (79)
 /* ds:SignatureMethodType */
 struct ds__SignatureMethodType
 {
@@ -626,7 +783,7 @@ typedef struct ds__SignatureMethodType ds__SignatureMethodType;
 #endif
 
 #ifndef SOAP_TYPE_ds__ReferenceType
-#define SOAP_TYPE_ds__ReferenceType (31)
+#define SOAP_TYPE_ds__ReferenceType (80)
 /* ds:ReferenceType */
 struct ds__ReferenceType
 {
@@ -641,7 +798,7 @@ typedef struct ds__ReferenceType ds__ReferenceType;
 #endif
 
 #ifndef SOAP_TYPE_ds__TransformsType
-#define SOAP_TYPE_ds__TransformsType (32)
+#define SOAP_TYPE_ds__TransformsType (81)
 /* ds:TransformsType */
 struct ds__TransformsType
 {
@@ -652,7 +809,7 @@ typedef struct ds__TransformsType ds__TransformsType;
 #endif
 
 #ifndef SOAP_TYPE_ds__DigestMethodType
-#define SOAP_TYPE_ds__DigestMethodType (37)
+#define SOAP_TYPE_ds__DigestMethodType (86)
 /* ds:DigestMethodType */
 struct ds__DigestMethodType
 {
@@ -662,7 +819,7 @@ typedef struct ds__DigestMethodType ds__DigestMethodType;
 #endif
 
 #ifndef SOAP_TYPE_ds__KeyValueType
-#define SOAP_TYPE_ds__KeyValueType (38)
+#define SOAP_TYPE_ds__KeyValueType (87)
 /* ds:KeyValueType */
 struct ds__KeyValueType
 {
@@ -673,7 +830,7 @@ typedef struct ds__KeyValueType ds__KeyValueType;
 #endif
 
 #ifndef SOAP_TYPE_ds__RetrievalMethodType
-#define SOAP_TYPE_ds__RetrievalMethodType (40)
+#define SOAP_TYPE_ds__RetrievalMethodType (89)
 /* ds:RetrievalMethodType */
 struct ds__RetrievalMethodType
 {
@@ -685,7 +842,7 @@ typedef struct ds__RetrievalMethodType ds__RetrievalMethodType;
 #endif
 
 #ifndef SOAP_TYPE_ds__X509DataType
-#define SOAP_TYPE_ds__X509DataType (21)
+#define SOAP_TYPE_ds__X509DataType (70)
 /* ds:X509DataType */
 struct ds__X509DataType
 {
@@ -699,7 +856,7 @@ typedef struct ds__X509DataType ds__X509DataType;
 #endif
 
 #ifndef SOAP_TYPE_ds__X509IssuerSerialType
-#define SOAP_TYPE_ds__X509IssuerSerialType (44)
+#define SOAP_TYPE_ds__X509IssuerSerialType (93)
 /* ds:X509IssuerSerialType */
 struct ds__X509IssuerSerialType
 {
@@ -710,7 +867,7 @@ typedef struct ds__X509IssuerSerialType ds__X509IssuerSerialType;
 #endif
 
 #ifndef SOAP_TYPE_ds__DSAKeyValueType
-#define SOAP_TYPE_ds__DSAKeyValueType (45)
+#define SOAP_TYPE_ds__DSAKeyValueType (94)
 /* ds:DSAKeyValueType */
 struct ds__DSAKeyValueType
 {
@@ -726,7 +883,7 @@ typedef struct ds__DSAKeyValueType ds__DSAKeyValueType;
 #endif
 
 #ifndef SOAP_TYPE_ds__RSAKeyValueType
-#define SOAP_TYPE_ds__RSAKeyValueType (46)
+#define SOAP_TYPE_ds__RSAKeyValueType (95)
 /* ds:RSAKeyValueType */
 struct ds__RSAKeyValueType
 {
@@ -737,7 +894,7 @@ typedef struct ds__RSAKeyValueType ds__RSAKeyValueType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__EncryptionPropertyType
-#define SOAP_TYPE_xenc__EncryptionPropertyType (68)
+#define SOAP_TYPE_xenc__EncryptionPropertyType (116)
 /* xenc:EncryptionPropertyType */
 struct xenc__EncryptionPropertyType
 {
@@ -748,7 +905,7 @@ typedef struct xenc__EncryptionPropertyType xenc__EncryptionPropertyType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__EncryptedType
-#define SOAP_TYPE_xenc__EncryptedType (58)
+#define SOAP_TYPE_xenc__EncryptedType (106)
 /* xenc:EncryptedType */
 struct xenc__EncryptedType
 {
@@ -765,7 +922,7 @@ typedef struct xenc__EncryptedType xenc__EncryptedType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__EncryptionMethodType
-#define SOAP_TYPE_xenc__EncryptionMethodType (59)
+#define SOAP_TYPE_xenc__EncryptionMethodType (107)
 /* xenc:EncryptionMethodType */
 struct xenc__EncryptionMethodType
 {
@@ -779,7 +936,7 @@ typedef struct xenc__EncryptionMethodType xenc__EncryptionMethodType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__CipherDataType
-#define SOAP_TYPE_xenc__CipherDataType (60)
+#define SOAP_TYPE_xenc__CipherDataType (108)
 /* xenc:CipherDataType */
 struct xenc__CipherDataType
 {
@@ -790,7 +947,7 @@ typedef struct xenc__CipherDataType xenc__CipherDataType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__CipherReferenceType
-#define SOAP_TYPE_xenc__CipherReferenceType (61)
+#define SOAP_TYPE_xenc__CipherReferenceType (109)
 /* xenc:CipherReferenceType */
 struct xenc__CipherReferenceType
 {
@@ -801,7 +958,7 @@ typedef struct xenc__CipherReferenceType xenc__CipherReferenceType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__TransformsType
-#define SOAP_TYPE_xenc__TransformsType (62)
+#define SOAP_TYPE_xenc__TransformsType (110)
 /* xenc:TransformsType */
 struct xenc__TransformsType
 {
@@ -811,7 +968,7 @@ typedef struct xenc__TransformsType xenc__TransformsType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__AgreementMethodType
-#define SOAP_TYPE_xenc__AgreementMethodType (65)
+#define SOAP_TYPE_xenc__AgreementMethodType (113)
 /* xenc:AgreementMethodType */
 struct xenc__AgreementMethodType
 {
@@ -825,7 +982,7 @@ typedef struct xenc__AgreementMethodType xenc__AgreementMethodType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__ReferenceType
-#define SOAP_TYPE_xenc__ReferenceType (66)
+#define SOAP_TYPE_xenc__ReferenceType (114)
 /* xenc:ReferenceType */
 struct xenc__ReferenceType
 {
@@ -835,7 +992,7 @@ typedef struct xenc__ReferenceType xenc__ReferenceType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__EncryptionPropertiesType
-#define SOAP_TYPE_xenc__EncryptionPropertiesType (67)
+#define SOAP_TYPE_xenc__EncryptionPropertiesType (115)
 /* xenc:EncryptionPropertiesType */
 struct xenc__EncryptionPropertiesType
 {
@@ -847,7 +1004,7 @@ typedef struct xenc__EncryptionPropertiesType xenc__EncryptionPropertiesType;
 #endif
 
 #ifndef SOAP_TYPE___xenc__union_ReferenceList
-#define SOAP_TYPE___xenc__union_ReferenceList (77)
+#define SOAP_TYPE___xenc__union_ReferenceList (125)
 /* Operation wrapper: */
 struct __xenc__union_ReferenceList
 {
@@ -857,7 +1014,7 @@ struct __xenc__union_ReferenceList
 #endif
 
 #ifndef SOAP_TYPE__xenc__ReferenceList
-#define SOAP_TYPE__xenc__ReferenceList (69)
+#define SOAP_TYPE__xenc__ReferenceList (117)
 /* xenc:ReferenceList */
 struct _xenc__ReferenceList
 {
@@ -868,7 +1025,7 @@ typedef struct _xenc__ReferenceList _xenc__ReferenceList;
 #endif
 
 #ifndef SOAP_TYPE_xenc__EncryptedDataType
-#define SOAP_TYPE_xenc__EncryptedDataType (63)
+#define SOAP_TYPE_xenc__EncryptedDataType (111)
 /* xenc:EncryptedDataType */
 struct xenc__EncryptedDataType
 {
@@ -885,7 +1042,7 @@ typedef struct xenc__EncryptedDataType xenc__EncryptedDataType;
 #endif
 
 #ifndef SOAP_TYPE_xenc__EncryptedKeyType
-#define SOAP_TYPE_xenc__EncryptedKeyType (64)
+#define SOAP_TYPE_xenc__EncryptedKeyType (112)
 /* xenc:EncryptedKeyType */
 struct xenc__EncryptedKeyType
 {
@@ -905,7 +1062,7 @@ typedef struct xenc__EncryptedKeyType xenc__EncryptedKeyType;
 #endif
 
 #ifndef SOAP_TYPE_wsc__SecurityContextTokenType
-#define SOAP_TYPE_wsc__SecurityContextTokenType (83)
+#define SOAP_TYPE_wsc__SecurityContextTokenType (131)
 /* wsc:SecurityContextTokenType */
 struct wsc__SecurityContextTokenType
 {
@@ -916,7 +1073,7 @@ struct wsc__SecurityContextTokenType
 #endif
 
 #ifndef SOAP_TYPE__wsc__union_DerivedKeyTokenType
-#define SOAP_TYPE__wsc__union_DerivedKeyTokenType (89)
+#define SOAP_TYPE__wsc__union_DerivedKeyTokenType (136)
 /* xsd:choice */
 union _wsc__union_DerivedKeyTokenType
 {
@@ -928,7 +1085,7 @@ union _wsc__union_DerivedKeyTokenType
 #endif
 
 #ifndef SOAP_TYPE___wsc__DerivedKeyTokenType_sequence
-#define SOAP_TYPE___wsc__DerivedKeyTokenType_sequence (87)
+#define SOAP_TYPE___wsc__DerivedKeyTokenType_sequence (135)
 /* Operation wrapper: */
 struct __wsc__DerivedKeyTokenType_sequence
 {
@@ -939,7 +1096,7 @@ struct __wsc__DerivedKeyTokenType_sequence
 #endif
 
 #ifndef SOAP_TYPE_wsc__DerivedKeyTokenType
-#define SOAP_TYPE_wsc__DerivedKeyTokenType (84)
+#define SOAP_TYPE_wsc__DerivedKeyTokenType (132)
 /* wsc:DerivedKeyTokenType */
 struct wsc__DerivedKeyTokenType
 {
@@ -955,7 +1112,7 @@ struct wsc__DerivedKeyTokenType
 #endif
 
 #ifndef SOAP_TYPE_wsc__PropertiesType
-#define SOAP_TYPE_wsc__PropertiesType (85)
+#define SOAP_TYPE_wsc__PropertiesType (133)
 /* wsc:PropertiesType */
 struct wsc__PropertiesType
 {
@@ -966,7 +1123,7 @@ struct wsc__PropertiesType
 #endif
 
 #ifndef SOAP_TYPE__wsse__Security
-#define SOAP_TYPE__wsse__Security (92)
+#define SOAP_TYPE__wsse__Security (139)
 /* wsse:Security */
 struct _wsse__Security
 {
@@ -984,7 +1141,7 @@ typedef struct _wsse__Security _wsse__Security;
 #endif
 
 #ifndef SOAP_TYPE__wsse__Password
-#define SOAP_TYPE__wsse__Password (11)
+#define SOAP_TYPE__wsse__Password (60)
 /* Primitive wsse:Password schema type: */
 struct _wsse__Password
 {
@@ -992,163 +1149,6 @@ struct _wsse__Password
 	char *Type;	/* optional attribute of type xsd:string */
 };
 typedef struct _wsse__Password _wsse__Password;
-#endif
-
-#ifndef WITH_NOGLOBAL
-
-#ifndef SOAP_TYPE_SOAP_ENV__Header
-#define SOAP_TYPE_SOAP_ENV__Header (99)
-/* SOAP Header: */
-struct SOAP_ENV__Header
-{
-	struct _wsse__Security *wsse__Security;	/* mustUnderstand */
-	char *wsa5__MessageID;	/* optional element of type wsa5:MessageID */
-	struct wsa5__RelatesToType *wsa5__RelatesTo;	/* optional element of type wsa5:RelatesTo */
-	struct wsa5__EndpointReferenceType *wsa5__From;	/* optional element of type wsa5:From */
-	struct wsa5__EndpointReferenceType *wsa5__ReplyTo;	/* mustUnderstand */
-	struct wsa5__EndpointReferenceType *wsa5__FaultTo;	/* mustUnderstand */
-	char *wsa5__To;	/* mustUnderstand */
-	char *wsa5__Action;	/* mustUnderstand */
-	struct chan__ChannelInstanceType *chan__ChannelInstance;	/* optional element of type chan:ChannelInstanceType */
-};
-#endif
-
-#endif
-
-#ifndef SOAP_TYPE__xop__Include
-#define SOAP_TYPE__xop__Include (101)
-/* Base64 schema type: */
-struct _xop__Include
-{
-	unsigned char *__ptr;
-	int __size;
-	char *id;	/* optional element of type xsd:string */
-	char *type;	/* optional element of type xsd:string */
-	char *options;	/* optional element of type xsd:string */
-};
-typedef struct _xop__Include _xop__Include;
-#endif
-
-#ifndef SOAP_TYPE_wsa5__EndpointReferenceType
-#define SOAP_TYPE_wsa5__EndpointReferenceType (105)
-/* wsa5:EndpointReferenceType */
-struct wsa5__EndpointReferenceType
-{
-	char *Address;	/* required element of type xsd:string */
-	struct wsa5__ReferenceParametersType *ReferenceParameters;	/* optional element of type wsa5:ReferenceParametersType */
-	struct wsa5__MetadataType *Metadata;	/* optional element of type wsa5:MetadataType */
-	int __size;	/* sequence of elements <-any> */
-	char **__any;
-	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
-};
-typedef struct wsa5__EndpointReferenceType wsa5__EndpointReferenceType;
-#endif
-
-#ifndef SOAP_TYPE_wsa5__ReferenceParametersType
-#define SOAP_TYPE_wsa5__ReferenceParametersType (106)
-/* wsa5:ReferenceParametersType */
-struct wsa5__ReferenceParametersType
-{
-	int *chan__ChannelInstance;	/* optional element of type xsd:int */
-	int __size;	/* sequence of elements <-any> */
-	char **__any;
-	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
-};
-typedef struct wsa5__ReferenceParametersType wsa5__ReferenceParametersType;
-#endif
-
-#ifndef SOAP_TYPE_wsa5__MetadataType
-#define SOAP_TYPE_wsa5__MetadataType (107)
-/* wsa5:MetadataType */
-struct wsa5__MetadataType
-{
-	int __size;	/* sequence of elements <-any> */
-	char **__any;
-	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
-};
-typedef struct wsa5__MetadataType wsa5__MetadataType;
-#endif
-
-#ifndef SOAP_TYPE_wsa5__ProblemActionType
-#define SOAP_TYPE_wsa5__ProblemActionType (109)
-/* wsa5:ProblemActionType */
-struct wsa5__ProblemActionType
-{
-	char *Action;	/* optional element of type xsd:string */
-	char *SoapAction;	/* optional element of type xsd:string */
-	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
-};
-typedef struct wsa5__ProblemActionType wsa5__ProblemActionType;
-#endif
-
-#ifndef SOAP_TYPE_wsa5__RelatesToType
-#define SOAP_TYPE_wsa5__RelatesToType (108)
-/* Primitive wsa5:RelatesToType schema type: */
-struct wsa5__RelatesToType
-{
-	char *__item;
-	char *RelationshipType;	/* optional attribute of type wsa5:RelationshipTypeOpenEnum */
-	char *__anyAttribute;	/* optional attribute of type xsd:anyType */
-};
-typedef struct wsa5__RelatesToType wsa5__RelatesToType;
-#endif
-
-#ifndef SOAP_TYPE_chan__ChannelInstanceType
-#define SOAP_TYPE_chan__ChannelInstanceType (132)
-/* Primitive chan:ChannelInstanceType schema type: */
-struct chan__ChannelInstanceType
-{
-	int __item;
-	enum _wsa5__IsReferenceParameter wsa5__IsReferenceParameter;	/* optional attribute of type wsa5:IsReferenceParameter */
-};
-#endif
-
-#ifndef WITH_NOGLOBAL
-
-#ifndef SOAP_TYPE_SOAP_ENV__Code
-#define SOAP_TYPE_SOAP_ENV__Code (140)
-/* SOAP Fault Code: */
-struct SOAP_ENV__Code
-{
-	char *SOAP_ENV__Value;	/* optional element of type xsd:QName */
-	struct SOAP_ENV__Code *SOAP_ENV__Subcode;	/* optional element of type SOAP-ENV:Code */
-};
-#endif
-
-#endif
-
-#ifndef WITH_NOGLOBAL
-
-#ifndef SOAP_TYPE_SOAP_ENV__Reason
-#define SOAP_TYPE_SOAP_ENV__Reason (142)
-/* SOAP-ENV:Reason */
-struct SOAP_ENV__Reason
-{
-	char *SOAP_ENV__Text;	/* optional element of type xsd:string */
-};
-#endif
-
-#endif
-
-#ifndef WITH_NOGLOBAL
-
-#ifndef SOAP_TYPE_SOAP_ENV__Fault
-#define SOAP_TYPE_SOAP_ENV__Fault (146)
-/* SOAP Fault: */
-struct SOAP_ENV__Fault
-{
-	char *faultcode;	/* optional element of type xsd:QName */
-	char *faultstring;	/* optional element of type xsd:string */
-	char *faultactor;	/* optional element of type xsd:string */
-	struct SOAP_ENV__Detail *detail;	/* optional element of type SOAP-ENV:Detail */
-	struct SOAP_ENV__Code *SOAP_ENV__Code;	/* optional element of type SOAP-ENV:Code */
-	struct SOAP_ENV__Reason *SOAP_ENV__Reason;	/* optional element of type SOAP-ENV:Reason */
-	char *SOAP_ENV__Node;	/* optional element of type xsd:string */
-	char *SOAP_ENV__Role;	/* optional element of type xsd:string */
-	struct SOAP_ENV__Detail *SOAP_ENV__Detail;	/* optional element of type SOAP-ENV:Detail */
-};
-#endif
-
 #endif
 
 #ifndef SOAP_TYPE_SOAP_ENV__Envelope
@@ -12933,7 +12933,7 @@ struct tt__OSDReference
 #ifndef WITH_NOGLOBAL
 
 #ifndef SOAP_TYPE_SOAP_ENV__Detail
-#define SOAP_TYPE_SOAP_ENV__Detail (138)
+#define SOAP_TYPE_SOAP_ENV__Detail (47)
 /* SOAP-ENV:Detail */
 struct SOAP_ENV__Detail
 {
@@ -14882,104 +14882,104 @@ typedef char *_QName;
 typedef char *_XML;
 #endif
 
-#ifndef SOAP_TYPE__ds__Signature
-#define SOAP_TYPE__ds__Signature (28)
-typedef struct ds__SignatureType _ds__Signature;
-#endif
-
-#ifndef SOAP_TYPE__ds__Transform
-#define SOAP_TYPE__ds__Transform (36)
-typedef struct ds__TransformType _ds__Transform;
-#endif
-
-#ifndef SOAP_TYPE__ds__KeyInfo
-#define SOAP_TYPE__ds__KeyInfo (43)
-typedef struct ds__KeyInfoType _ds__KeyInfo;
-#endif
-
-#ifndef SOAP_TYPE_wsc__FaultCodeOpenEnumType
-#define SOAP_TYPE_wsc__FaultCodeOpenEnumType (81)
-typedef char *wsc__FaultCodeOpenEnumType;
-#endif
-
 #ifndef SOAP_TYPE_wsa5__RelationshipTypeOpenEnum
-#define SOAP_TYPE_wsa5__RelationshipTypeOpenEnum (110)
+#define SOAP_TYPE_wsa5__RelationshipTypeOpenEnum (16)
 typedef char *wsa5__RelationshipTypeOpenEnum;
 #endif
 
 #ifndef SOAP_TYPE_wsa5__FaultCodesOpenEnumType
-#define SOAP_TYPE_wsa5__FaultCodesOpenEnumType (111)
+#define SOAP_TYPE_wsa5__FaultCodesOpenEnumType (17)
 typedef char *wsa5__FaultCodesOpenEnumType;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__EndpointReference
-#define SOAP_TYPE__wsa5__EndpointReference (117)
+#define SOAP_TYPE__wsa5__EndpointReference (24)
 typedef struct wsa5__EndpointReferenceType _wsa5__EndpointReference;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__ReferenceParameters
-#define SOAP_TYPE__wsa5__ReferenceParameters (118)
+#define SOAP_TYPE__wsa5__ReferenceParameters (25)
 typedef struct wsa5__ReferenceParametersType _wsa5__ReferenceParameters;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__Metadata
-#define SOAP_TYPE__wsa5__Metadata (119)
+#define SOAP_TYPE__wsa5__Metadata (26)
 typedef struct wsa5__MetadataType _wsa5__Metadata;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__MessageID
-#define SOAP_TYPE__wsa5__MessageID (120)
+#define SOAP_TYPE__wsa5__MessageID (27)
 typedef char *_wsa5__MessageID;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__RelatesTo
-#define SOAP_TYPE__wsa5__RelatesTo (121)
+#define SOAP_TYPE__wsa5__RelatesTo (28)
 typedef struct wsa5__RelatesToType _wsa5__RelatesTo;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__ReplyTo
-#define SOAP_TYPE__wsa5__ReplyTo (122)
+#define SOAP_TYPE__wsa5__ReplyTo (29)
 typedef struct wsa5__EndpointReferenceType _wsa5__ReplyTo;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__From
-#define SOAP_TYPE__wsa5__From (123)
+#define SOAP_TYPE__wsa5__From (30)
 typedef struct wsa5__EndpointReferenceType _wsa5__From;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__FaultTo
-#define SOAP_TYPE__wsa5__FaultTo (124)
+#define SOAP_TYPE__wsa5__FaultTo (31)
 typedef struct wsa5__EndpointReferenceType _wsa5__FaultTo;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__To
-#define SOAP_TYPE__wsa5__To (125)
+#define SOAP_TYPE__wsa5__To (32)
 typedef char *_wsa5__To;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__Action
-#define SOAP_TYPE__wsa5__Action (126)
+#define SOAP_TYPE__wsa5__Action (33)
 typedef char *_wsa5__Action;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__RetryAfter
-#define SOAP_TYPE__wsa5__RetryAfter (127)
+#define SOAP_TYPE__wsa5__RetryAfter (35)
 typedef ULONG64 _wsa5__RetryAfter;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__ProblemHeaderQName
-#define SOAP_TYPE__wsa5__ProblemHeaderQName (128)
+#define SOAP_TYPE__wsa5__ProblemHeaderQName (36)
 typedef char *_wsa5__ProblemHeaderQName;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__ProblemIRI
-#define SOAP_TYPE__wsa5__ProblemIRI (129)
+#define SOAP_TYPE__wsa5__ProblemIRI (37)
 typedef char *_wsa5__ProblemIRI;
 #endif
 
 #ifndef SOAP_TYPE__wsa5__ProblemAction
-#define SOAP_TYPE__wsa5__ProblemAction (130)
+#define SOAP_TYPE__wsa5__ProblemAction (38)
 typedef struct wsa5__ProblemActionType _wsa5__ProblemAction;
+#endif
+
+#ifndef SOAP_TYPE__ds__Signature
+#define SOAP_TYPE__ds__Signature (77)
+typedef struct ds__SignatureType _ds__Signature;
+#endif
+
+#ifndef SOAP_TYPE__ds__Transform
+#define SOAP_TYPE__ds__Transform (85)
+typedef struct ds__TransformType _ds__Transform;
+#endif
+
+#ifndef SOAP_TYPE__ds__KeyInfo
+#define SOAP_TYPE__ds__KeyInfo (92)
+typedef struct ds__KeyInfoType _ds__KeyInfo;
+#endif
+
+#ifndef SOAP_TYPE_wsc__FaultCodeOpenEnumType
+#define SOAP_TYPE_wsc__FaultCodeOpenEnumType (129)
+typedef char *wsc__FaultCodeOpenEnumType;
 #endif
 
 #ifndef SOAP_TYPE_xsd__NCName
