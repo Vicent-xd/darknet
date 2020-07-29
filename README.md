@@ -1,4 +1,25 @@
+## 本程序可实现云台目标跟踪
 ## STEP1:编译gsoap
+下载multi-platform分支代码
+automake --add-missing
+autoreconf
+（sudo apt-get install bison flex）
+https://gitweb.gentoo.org/repo/gentoo.git/tree/net-libs/gsoap/files/gsoap-2.8.93-fix-parallel-build.patch?id=e035a4bf9fbd9853270a0a665ea80f59009b060d
+./configure --disable-ssl
+
+### onvif.h文件生成
+cd bin/
+wsdl2h -c -t ../typemap.dat -o onvif.h ./wsdl/devicemgmt.wsdl ./wsdl/event.wsdl ./wsdl/media.wsdl ./wsdl/ptz.wsdl
+
+#import "wsse.h" >> onvif.h
+
+### c文件生成
+soapcpp2 -c -x onvif.h -I ../ -I ../import -I ../custom
+
+cp *.nsmap onvif
+cp *.c onvif
+cp *.h onvif
+
 ### ONVIF摄像头
 快速运行
 树莓派路径
