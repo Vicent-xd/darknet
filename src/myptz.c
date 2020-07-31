@@ -372,8 +372,8 @@ int enalbe_hikcam_control(detection *dets,int num,float thresh,char **names, int
                 }
             }
         }
-        if (class_id>=0) printf("class_id:%d,name:%s",class_id,names[class_id]);//std::cout<<"class_id"<<class_id<<"name:"<<names[class_id]<<std::endl;
-        if (class_id >= 0 && strcmp(names[class_id],"cup")==0) {
+        //if (class_id>=0) printf("class_id:%d,name:%s",class_id,names[class_id]);//std::cout<<"class_id"<<class_id<<"name:"<<names[class_id]<<std::endl;
+        if (class_id >= 0 && strcmp(names[class_id],"person")==0) {
             int tolerance=0.4;//0~0.5
             int vtolerance=0.4;
 	    tracked=1;
@@ -395,19 +395,19 @@ int enalbe_hikcam_control(detection *dets,int num,float thresh,char **names, int
 
                 //Ret=NET_DVR_PTZControl_Other(lUserID,1,PAN_LEFT,0);
             //stop condition
-	    printf("\n\nb.x:%f,b.y:%f,b.w:%f,b.h:%f \n",b.x,b.y,b.w,b.h);
+	    //printf("\n\nb.x:%f,b.y:%f,b.w:%f,b.h:%f \n",b.x,b.y,b.w,b.h);
             if (b.x>=(0.5-tolerance) && b.x<=(0.5+tolerance) && b.y>=(0.5-vtolerance) && b.y<=(0.5+vtolerance))
             {
                 Ret=stop_move();//Ret=NET_DVR_PTZControl_Other(lUserID,1,PAN_LEFT,1);//no need to adjust
             }
             else
             {
-		printf("\nb.x:%f\n",b.x);
-                printf("\n|x-0.5|:%f,|y-0.5|:%f\n",absf(b.x-0.5),absf(b.y-0.5));
+	//	printf("\nb.x:%f\n",b.x);
+          //      printf("\n|x-0.5|:%f,|y-0.5|:%f\n",absf(b.x-0.5),absf(b.y-0.5));
 		 //1.up,down condition
 		if (absf(b.x-0.5)<absf(b.y-0.5))
                 {
-	        printf("\nup,down\n");
+	    //    printf("\nup,down\n");
                 if (b.y<(0.5-vtolerance)) Ret=tilt_up();//NET_DVR_PTZControl_Other(lUserID,1,TILT_UP,0);//uper
                 if (b.y>(0.5+vtolerance)) Ret=tilt_down();//NET_DVR_PTZControl_Other(lUserID,1,TILT_DOWN,0);//downer
                 //std::cout<<"up,down\n"<<std::endl;
@@ -416,7 +416,7 @@ int enalbe_hikcam_control(detection *dets,int num,float thresh,char **names, int
                 else
                 {
 	        //sleep(5);
-		printf("\nleft,right\n");
+	//	printf("\nleft,right\n");
                 if (b.x<(0.5-tolerance)) Ret=pan_left();//NET_DVR_PTZControl_Other(lUserID,1,PAN_LEFT,0);//lefter
                 if (b.x>(0.5+tolerance)) Ret=pan_right();//NET_DVR_PTZControl_Other(lUserID,1,PAN_RIGHT,0);//righter
                 }
