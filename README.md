@@ -4,9 +4,9 @@
 https://www.openssl.org/source/old/1.0.2/openssl-1.0.2r.tar.gz
 ```
 ## STEP1:编译gsoap
-下载multi-platform分支代码
+下载xavier分支代码
 ```
-git clone -b multi-platform https://github.com/Vicent-xd/darknet.git --depth=1
+git clone -b xavier https://github.com/Vicent-xd/darknet.git
 ```
 ```
 automake --add-missing
@@ -28,36 +28,48 @@ wsdl2h -c -t ../typemap.dat -o onvif.h ./wsdl/devicemgmt.wsdl ./wsdl/event.wsdl 
 soapcpp2 -c -x onvif.h -I ../ -I ../import -I ../custom
 cp *.nsmap onvif&&cp *.c onvif&&cp *.h onvif
 ```
-### 编译myptz.c
+### 编译测试文件myptz.c
 ```
 cd onvif
 make -j$(nproc)
 ```
 
-## STEP2:将bin文件夹除了myptz.c/myptz.h外所有内容拷贝到src
-
+## STEP2:编译测试通过后将bin文件夹除了myptz.c/myptz.h外所有内容拷贝到src
+## STEP3:
+返回到darknet根目录
+```
+cd /root/darknet
+```
+编译darknet
+```
+make -j$(nproc)
+```
+## STEP4:下载权重文件yolov4.weights
+运行脚本
+```
+./net_cam_v4.sh 
+```
 ### ps:ONVIF摄像头
 快速运行
-树莓派路径
-C控制程序 /home/pi/onvif/gsoap-2.8/gsoap/bin/onvif
-python控制程序 /home/pi/onvif.py
 
-Xavier路径
 C控制程序 gsoap-2.8/gsoap/bin/onvif
-
 进入路径运行一下命令进行编译运行
+```
 make && ./PTZ
-
-PYZ是控制程序
+```
+PTZ是控制程序
 myptz.c 主要代码
 
 onvif python版编译运行参考
-https://blog.csdn.net/zong596568821xp/article/details/89644654
+```https://blog.csdn.net/zong596568821xp/article/details/89644654
+```
 C语言版编译运行参考
-https://zongxp.blog.csdn.net/article/details/90108569
-
+```https://zongxp.blog.csdn.net/article/details/90108569
+```
 ### 注意事项：
 gsoap版本 gsoap_2.8.22.zip
-https://sourceforge.net/projects/gsoap2/files/oldreleases/
+```https://sourceforge.net/projects/gsoap2/files/oldreleases/
+```
 error==4 错误修改
-https://blog.csdn.net/u011124985/article/details/80046904
+```https://blog.csdn.net/u011124985/article/details/80046904
+```
