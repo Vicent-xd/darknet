@@ -34,7 +34,13 @@ cd onvif
 make -j$(nproc)
 ```
 
-## STEP2:编译测试通过后将bin文件夹除了myptz.c/myptz.h外所有内容拷贝到darkent/src
+## STEP2:
+编译测试通过后将bin文件夹除了myptz.c/myptz.h外所有内容拷贝到darknet/src
+```
+mv myptz.c myptz.c.bak
+mv myptz.h myptz.h.bak
+cp *.c ../../../../../src && cp *.h ../../../../../src && cp *.nsmap ../../../../../src
+```
 ## STEP3:
 返回到darknet根目录
 ```
