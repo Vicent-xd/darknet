@@ -13,15 +13,18 @@ automake --add-missing
 autoreconf
 （sudo apt-get install bison flex）
 ./configure --disable-ssl
+make -j$(nproc)
 ```
 yacc.h找不到解决办法：
 ```https://gitweb.gentoo.org/repo/gentoo.git/tree/net-libs/gsoap/files/gsoap-2.8.93-fix-parallel-build.patch?id=e035a4bf9fbd9853270a0a665ea80f59009b060d```
 ### onvif.h文件生成
 ```
 cd bin/
+cp ../wsdl/wsdl2h ./
+cp ../src/soapcpp2 ./
 wsdl2h -c -t ../typemap.dat -o onvif.h ./wsdl/devicemgmt.wsdl ./wsdl/event.wsdl ./wsdl/media.wsdl ./wsdl/ptz.wsdl
 ```
-#import "wsse.h" >> onvif.h
+onvif.h内添加一行：#import "wsse.h"
 
 ### c文件生成
 ```
