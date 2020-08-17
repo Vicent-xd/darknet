@@ -3,6 +3,10 @@
 ```
 https://www.openssl.org/source/old/1.0.2/openssl-1.0.2r.tar.gz
 ```
+openssl安装路径需要与gsoap/bin/onvif/Makefile.inc内的 OPENSSL_DIR 一致，例如：
+```
+OPENSSL_DIR = /usr/local/openssl
+```
 ## STEP1:编译gsoap
 下载xavier分支代码
 ```
