@@ -7,9 +7,13 @@ cd openssl-1.0.2r
 make -j$(nproc)
 sudo make install
 ```
-openssl安装路径需要与gsoap/bin/onvif/Makefile.inc内的 OPENSSL_DIR (另外还有一些头文件) 一致，例如：
+openssl安装路径需要与gsoap/bin/onvif/Makefile.inc内的 OPENSSL_DIR 一致，例如：
 ```
 OPENSSL_DIR = /usr/local/openssl
+```
+安装libssl-dev
+```
+sudo apt install libssl-dev
 ```
 ## STEP1:编译gsoap
 下载xavier分支代码
@@ -17,6 +21,7 @@ OPENSSL_DIR = /usr/local/openssl
 git clone -b xavier https://github.com/Vicent-xd/darknet.git
 ```
 ```
+cd darknet/gsoap-2.8
 automake --add-missing
 autoreconf
 （sudo apt-get install bison flex）
