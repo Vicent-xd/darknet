@@ -1,9 +1,13 @@
 ## 本程序可实现云台目标跟踪
 ## BEFORE:编译openssl1.0.2r
 ```
-https://www.openssl.org/source/old/1.0.2/openssl-1.0.2r.tar.gz
+wget https://www.openssl.org/source/old/1.0.2/openssl-1.0.2r.tar.gz
+cd openssl-1.0.2r
+./configure --prefix=/usr/local/openssl
+make -j$(nproc)
+sudo make install
 ```
-openssl安装路径需要与gsoap/bin/onvif/Makefile.inc内的 OPENSSL_DIR 一致，例如：
+openssl安装路径需要与gsoap/bin/onvif/Makefile.inc内的 OPENSSL_DIR (另外还有一些头文件) 一致，例如：
 ```
 OPENSSL_DIR = /usr/local/openssl
 ```
